@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply bg-crema font-cuerpo text-tinta antialiased;
+}
+
+h1,
+h2,
+h3 {
+  @apply font-titulo;
+}
+
+@layer components {
+  .tarjeta {
+    @apply rounded-3xl bg-white/80 p-5 shadow-sm ring-1 ring-arena;
+  }
+  .boton {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-terracota px-5 py-3 font-medium text-white transition hover:brightness-95 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .boton-sec {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-arena px-5 py-3 font-medium text-tinta transition hover:brightness-95 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .input {
+    @apply w-full rounded-2xl border border-arena bg-white px-4 py-3 outline-none transition placeholder:text-tinta/40 focus:border-terracota focus:ring-2 focus:ring-rosa/40;
+  }
+  .etiqueta {
+    @apply mb-1 block text-sm font-medium text-tinta/70;
+  }
+  .chip {
+    @apply rounded-full bg-arena/60 px-3 py-1.5 text-sm transition hover:bg-arena;
+  }
+  .chip-activo {
+    @apply bg-tinta text-white hover:bg-tinta;
+  }
+}

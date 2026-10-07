@@ -1,0 +1,75 @@
+"use client";
+
+import Link from "next/link";
+import { useState, type FormEvent } from "react";
+import { updateProfile } from "firebase/auth";
+import Protegido from "@/components/Protegido";
+import { useAuth } from "@/components/AuthProvider";
+import { actualizarNombre } from "@/lib/datos";
+import { AVISO_SALUD, MARCA, linkWhatsapp } from "@/lib/marca";
+
+export default function Perfil() {
+  return (
+    <Protegido>
+      <Contenido />
+    </Protegido>
+  );
+}
+
+function Contenido() {
+  const { user, perfil, esAdmin, refrescarPerfil, cerrarSesion } = useAuth();
+  const [nombre, setNombre] = useState(perfil?.nombre ?? "");
+  const [guardado, setGuardado] = useState(false);
+
+  async function guardar(e: FormEvent) {
+    e.preventDefault();
+    if (!user) return;
+    await actualizarNombre(user.uid, nombre.trim());
+    await updateProfile(user, { displayName: nombre.trim() }).catch(() => undefined);
+    await refrescarPerfil();
+    setGuardado(true);
+    setTimeout(() => setGuardado(false), 2000);
+  }
+
+  return (
+    <div className="space-y-5">
+      <h1 className="text-3xl">Mi perfil</h1>
+
+      <form onSubmit={guardar} className="tarjeta space-y-4">
+        <div>
+          <label className="etiqueta" htmlFor="nombre">Nombre</label>
+          <input id="nombre" className="input" value={nombre} onChange={(e) => setNombre(e.target.value)} />
+        </div>
+        <div>
+          <p className="etiqueta">Correo</p>
+          <p className="px-1">{user?.email}</p>
+        </div>
+        <button className="boton w-full">{guardado ? "¡Guardado! ✓" : "Guardar cambios"}</button>
+      </form>
+
+      <div className="tarjeta space-y-2">
+        <p className="font-medium">⚠️ Antes de entrenar</p>
+        <p className="text-sm text-tinta/70">{AVISO_SALUD}</p>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <a
+          href={linkWhatsapp(`Hola, necesito ayuda con el ${MARCA.nombre}.`)}
+          target="_blank"
+          rel="noreferrer"
+          className="boton-sec"
+        >
+          💬 Ayuda por WhatsApp
+        </a>
+        {esAdmin && (
+          <Link href="/admin/" className="boton-sec">
+            ⚙️ Panel de administración
+          </Link>
+        )}
+        <button onClick={cerrarSesion} className="py-2 text-sm text-tinta/60 underline-offset-4 hover:underline">
+          Cerrar sesión
+        </button>
+      </div>
+    </div>
+  );
+}
