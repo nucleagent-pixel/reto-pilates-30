@@ -1,0 +1,54 @@
+rules_version = '2';
+
+// Reglas de seguridad de Firestore para la web del reto.
+// Pégalas en Firebase Console > Firestore Database > Reglas y publica.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function conSesion() {
+      return request.auth != null && request.auth.token.email != null;
+    }
+    function correo() {
+      return request.auth.token.email.lower();
+    }
+    function esAdmin() {
+      return conSesion() && exists(/databases/$(database)/documents/admins/$(correo()));
+    }
+    function tieneAcceso() {
+      return conSesion() && (
+        esAdmin() ||
+        (exists(/databases/$(database)/documents/accesos/$(correo())) &&
+         get(/databases/$(database)/documents/accesos/$(correo())).data.activo == true)
+      );
+    }
+
+    // Administradoras: se crean a mano desde la consola (documento con el correo como ID).
+    match /admins/{email} {
+      allow read: if conSesion() && email == correo();
+      allow write: if false;
+    }
+
+    // Clientas autorizadas (se agregan desde el panel de admin cuando confirman el pago).
+    match /accesos/{email} {
+      allow read: if esAdmin() || (conSesion() && email == correo());
+      allow write: if esAdmin();
+    }
+
+    // Clases del reto y rutinas rápidas.
+    match /rutinas/{id} {
+      allow read: if tieneAcceso();
+      allow write: if esAdmin();
+    }
+
+    // Perfil y progreso de cada clienta: solo ella puede verlo y editarlo.
+    match /usuarios/{uid} {
+      allow read, write: if tieneAcceso() && request.auth.uid == uid;
+      allow read: if esAdmin();
+
+      match /registros/{registro} {
+        allow read, write: if tieneAcceso() && request.auth.uid == uid;
+        allow read: if esAdmin();
+      }
+    }
+  }
+}
