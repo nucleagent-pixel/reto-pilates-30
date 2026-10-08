@@ -96,10 +96,10 @@ function Clase() {
           {esReto ? `Día ${rutina.orden} del reto` : `Rutina rápida${rutina.duracion ? ` · ${rutina.duracion}` : ""}`}
         </p>
         <h1 className="titular mt-1">{rutina.titulo}</h1>
-        {(rutina.duracion || rutina.zona) && (
+        {(rutina.duracion || (rutina.zona && rutina.zona !== rutina.titulo)) && (
           <div className="mt-3 flex flex-wrap gap-2">
             {rutina.duracion && <span className="chip">{rutina.duracion}</span>}
-            {rutina.zona && <span className="chip">{rutina.zona}</span>}
+            {rutina.zona && rutina.zona !== rutina.titulo && <span className="chip">{rutina.zona}</span>}
           </div>
         )}
         {rutina.descripcion && <p className="mt-4 whitespace-pre-line text-carbon/80">{rutina.descripcion}</p>}
