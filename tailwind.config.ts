@@ -1,21 +1,22 @@
 import type { Config } from "tailwindcss";
 
-// Colores de la marca. Cámbialos aquí cuando esté lista la identidad de Laura.
+// Identidad Laura Gómez Pilates: sacada de su estudio en casa.
+// Salvia (su top), lino (las paredes), niebla (bordes suaves), madera y miel (estantería y canastos), carbón (los mats).
 const config: Config = {
   content: ["./src/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {
-        crema: "#FBF6F1",
-        arena: "#EFE3D6",
-        terracota: "#C2705A",
-        rosa: "#E9B9AA",
-        salvia: "#8DA38B",
-        tinta: "#3A2E29",
+        salvia: { DEFAULT: "#55684F", claro: "#8C9C84", fondo: "#E4E9DF" },
+        lino: "#F1F0EB",
+        niebla: "#DCE0D6",
+        madera: "#A87C55",
+        miel: "#D9B88F",
+        carbon: "#232724",
       },
       fontFamily: {
-        titulo: ["Fraunces", "Georgia", "serif"],
-        cuerpo: ["'DM Sans'", "system-ui", "sans-serif"],
+        titulo: ["'Barlow Condensed'", "'Arial Narrow'", "sans-serif"],
+        cuerpo: ["Barlow", "system-ui", "sans-serif"],
       },
     },
   },

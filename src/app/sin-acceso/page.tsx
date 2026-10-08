@@ -23,8 +23,8 @@ export default function SinAcceso() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-center px-5 py-10 text-center">
       <p className="text-5xl">🔒</p>
-      <h1 className="mt-4 text-3xl">Tu acceso está desactivado</h1>
-      <p className="mt-3 text-tinta/70">
+      <h1 className="titular mt-4">Tu acceso está desactivado</h1>
+      <p className="mt-3 text-carbon/70">
         La cuenta <strong>{user.email}</strong> no tiene acceso en este momento. Escríbenos por WhatsApp y te ayudamos.
       </p>
 
@@ -35,7 +35,7 @@ export default function SinAcceso() {
         <button className="boton-sec" onClick={() => window.location.reload()}>
           Revisar de nuevo
         </button>
-        <button className="text-sm text-tinta/60 underline-offset-4 hover:underline" onClick={cerrarSesion}>
+        <button className="text-sm text-carbon/60 underline-offset-4 hover:underline" onClick={cerrarSesion}>
           Cerrar sesión
         </button>
       </div>

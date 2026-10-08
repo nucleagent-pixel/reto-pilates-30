@@ -11,6 +11,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { agregarRegistro, completarDia, obtenerRutina, registrarActividad } from "@/lib/datos";
 import { diaActual, diaDesbloqueado, estaCompletado, idReto } from "@/lib/progreso";
 import { MARCA } from "@/lib/marca";
+import { AvatarLaura } from "@/components/Marca";
 import type { Rutina } from "@/lib/tipos";
 
 export default function ClasePagina() {
@@ -56,7 +57,7 @@ function Clase() {
       <div className="tarjeta space-y-3 text-center">
         <p className="text-5xl">🔒</p>
         <h1 className="text-2xl">El día {rutina.orden} aún está bloqueado</h1>
-        <p className="text-tinta/70">Completa el día anterior para desbloquearlo.</p>
+        <p className="text-carbon/70">Completa el día anterior para desbloquearlo.</p>
         {actual && (
           <Link href={`/clase/?id=${idReto(actual)}`} className="boton">
             Ir al día {actual}
@@ -81,36 +82,36 @@ function Clase() {
 
   return (
     <div className="space-y-5">
-      <Link href={esReto ? "/reto/" : "/rapidas/"} className="text-sm text-tinta/60 hover:text-tinta">
+      <Link href={esReto ? "/reto/" : "/rapidas/"} className="text-sm text-carbon/60 hover:text-carbon">
         ← {esReto ? "Volver al reto" : "Rutinas rápidas"}
       </Link>
 
       <VideoPlayer url={rutina.videoUrl} titulo={rutina.titulo} />
 
       <header>
-        <p className="text-sm font-medium text-terracota">
+        <p className="text-sm font-medium text-salvia">
           {esReto ? `Día ${rutina.orden} de ${MARCA.totalDias}` : "Rutina rápida"}
         </p>
-        <h1 className="mt-1 text-3xl">{rutina.titulo}</h1>
+        <h1 className="titular mt-1">{rutina.titulo}</h1>
         {(rutina.duracion || rutina.zona) && (
           <div className="mt-3 flex flex-wrap gap-2">
-            {rutina.duracion && <span className="chip">⏱ {rutina.duracion}</span>}
-            {rutina.zona && <span className="chip">🎯 {rutina.zona}</span>}
+            {rutina.duracion && <span className="chip">{rutina.duracion}</span>}
+            {rutina.zona && <span className="chip">{rutina.zona}</span>}
           </div>
         )}
-        {rutina.descripcion && <p className="mt-4 whitespace-pre-line text-tinta/80">{rutina.descripcion}</p>}
+        {rutina.descripcion && <p className="mt-4 whitespace-pre-line text-carbon/80">{rutina.descripcion}</p>}
         {rutina.pdfUrl && (
           <a href={rutina.pdfUrl} target="_blank" rel="noreferrer" className="boton-sec mt-4">
-            📄 Ver guía en PDF
+            Abrir la guía en PDF
           </a>
         )}
       </header>
 
       {paso === "ver" && (
         <div className="tarjeta">
-          {yaHecho && <p className="mb-3 text-sm text-salvia">✓ Ya completaste este día. Puedes repetirlo cuando quieras.</p>}
+          {yaHecho && <p className="mb-3 text-sm text-madera">✓ Ya completaste este día. Puedes repetirlo cuando quieras.</p>}
           <button className="boton w-full" onClick={() => setPaso("checkin")}>
-            {esReto && !yaHecho ? "Terminé esta clase ✓" : "La hice hoy ✓"}
+            {esReto && !yaHecho ? "Terminé la clase" : "La hice hoy"}
           </button>
         </div>
       )}
@@ -118,7 +119,7 @@ function Clase() {
       {paso === "checkin" && (
         <div className="tarjeta">
           <CheckIn
-            titulo="¡Bien hecho! ¿Cómo te sentiste?"
+            titulo="¿Cómo te sentiste en la clase?"
             textoBoton="Guardar y terminar"
             permitirOmitir
             onGuardar={guardar}
@@ -127,16 +128,24 @@ function Clase() {
       )}
 
       {paso === "hecho" && (
-        <div className="rounded-3xl bg-salvia p-6 text-center text-white">
-          <p className="text-4xl">🎉</p>
-          <p className="mt-2 font-titulo text-2xl">
-            {esReto ? `¡Día ${rutina.orden} completado!` : "¡Rutina completada!"}
+        <div className="rounded-[1.75rem] bg-salvia p-6 text-white">
+          <p className="font-titulo text-5xl font-bold leading-none">
+            {esReto ? `Día ${rutina.orden} listo` : "Rutina lista"}
           </p>
-          <p className="mt-1 text-white/90">Cada clase cuenta. Nos vemos en la próxima.</p>
+          <div className="mt-5 flex items-start gap-3">
+            <AvatarLaura tam={40} />
+            <p className="rounded-2xl rounded-tl-md bg-white/15 px-4 py-3 leading-snug">
+              {siguiente
+                ? `Muy bien. Mañana te espero en el día ${siguiente}.`
+                : esReto
+                  ? "Terminaste el reto. Estoy orgullosa de ti."
+                  : "Cada minuto en el mat suma. Nos vemos pronto."}
+            </p>
+          </div>
           <div className="mt-5 flex flex-col gap-2">
             {siguiente && (
-              <Link href={`/clase/?id=${idReto(siguiente)}`} className="rounded-full bg-white px-5 py-3 font-medium text-tinta">
-                Ver el día {siguiente} →
+              <Link href={`/clase/?id=${idReto(siguiente)}`} className="rounded-full bg-white px-5 py-3 font-medium text-carbon">
+                Ver el día {siguiente}
               </Link>
             )}
             <Link href="/" className="rounded-full bg-white/20 px-5 py-3 font-medium">

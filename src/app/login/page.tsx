@@ -11,6 +11,7 @@ import {
 import { fb } from "@/lib/firebase";
 import { useAuth } from "@/components/AuthProvider";
 import { MARCA } from "@/lib/marca";
+import Marca from "@/components/Marca";
 
 type Modo = "entrar" | "crear" | "recuperar";
 
@@ -67,18 +68,30 @@ export default function Login() {
   }
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-center px-5 py-10">
-      <div className="mb-8 text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-terracota font-titulo text-3xl text-white">
-          {MARCA.instructora[0]}
+    <main className="min-h-dvh lg:grid lg:grid-cols-[1.1fr_1fr]">
+      {/* Foto de Laura: la protagonista de la marca. */}
+      <div className="relative h-[46dvh] overflow-hidden rounded-b-[2.5rem] lg:sticky lg:top-0 lg:h-dvh lg:rounded-none">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={MARCA.foto} alt={`${MARCA.instructora}, tu instructora`} className="h-full w-full object-cover object-[60%_25%]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-carbon/70 via-carbon/10 to-transparent" />
+        <div className="absolute bottom-6 left-5 right-5 lg:bottom-12 lg:left-12">
+          <Marca claro grande />
         </div>
-        <h1 className="text-3xl">{MARCA.nombre}</h1>
-        <p className="mt-2 text-tinta/60">{MARCA.eslogan}</p>
       </div>
 
-      <div className="tarjeta">
+      <div className="mx-auto flex max-w-md flex-col justify-center px-5 pb-12 pt-8 lg:min-h-dvh lg:py-12">
+        <h1 className="titular">{MARCA.nombre}</h1>
+        <p className="mb-7 mt-2 text-carbon/70">
+          {modo === "crear"
+            ? `Crea tu cuenta y empieza hoy con ${MARCA.instructora}. Tu progreso queda guardado.`
+            : modo === "recuperar"
+              ? "Escribe tu correo y te enviamos un enlace para crear una contraseña nueva."
+              : `Entra para seguir tu reto con ${MARCA.instructora}.`}
+        </p>
+
+      <div>
         {modo !== "recuperar" && (
-          <div className="mb-5 grid grid-cols-2 rounded-full bg-arena/60 p-1 text-sm font-medium">
+          <div className="mb-6 grid grid-cols-2 rounded-full bg-salvia-fondo p-1 text-sm font-semibold">
             {(["entrar", "crear"] as const).map((m) => (
               <button
                 key={m}
@@ -87,7 +100,7 @@ export default function Login() {
                   setModo(m);
                   setError("");
                 }}
-                className={`rounded-full py-2 transition ${modo === m ? "bg-white shadow-sm" : "text-tinta/60"}`}
+                className={`rounded-full py-2 transition ${modo === m ? "bg-white shadow-sm" : "text-carbon/60"}`}
               >
                 {m === "entrar" ? "Iniciar sesión" : "Crear cuenta"}
               </button>
@@ -95,14 +108,6 @@ export default function Login() {
           </div>
         )}
 
-        {modo === "crear" && (
-          <p className="mb-4 rounded-2xl bg-rosa/25 px-4 py-3 text-sm">
-            Crea tu cuenta con tu correo y una contraseña. ¡Así guardamos tu progreso del reto! 💪
-          </p>
-        )}
-        {modo === "recuperar" && (
-          <p className="mb-4 font-titulo text-xl">Recuperar contraseña</p>
-        )}
 
         <form onSubmit={enviar} className="space-y-4">
           {modo === "crear" && (
@@ -140,7 +145,7 @@ export default function Login() {
           )}
 
           {error && <p className="text-sm text-red-700">{error}</p>}
-          {aviso && <p className="text-sm text-salvia">{aviso}</p>}
+          {aviso && <p className="text-sm text-madera">{aviso}</p>}
 
           <button className="boton w-full" disabled={enviando}>
             {enviando
@@ -160,10 +165,11 @@ export default function Login() {
             setError("");
             setAviso("");
           }}
-          className="mt-4 w-full text-center text-sm text-tinta/60 underline-offset-4 hover:underline"
+          className="mt-4 w-full text-center text-sm text-carbon/60 underline-offset-4 hover:underline"
         >
           {modo === "recuperar" ? "← Volver a iniciar sesión" : "Olvidé mi contraseña"}
         </button>
+      </div>
       </div>
     </main>
   );

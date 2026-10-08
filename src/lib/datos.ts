@@ -112,6 +112,12 @@ export async function guardarRutina(r: Rutina) {
   await setDoc(doc(fb().db, "rutinas", id), limpiar(resto), { merge: true });
 }
 
+/** Actualiza solo los campos que vienen (no borra lo que ya estaba escrito). */
+export async function guardarRutinaParcial(r: Partial<Rutina> & { id: string }) {
+  const { id, ...resto } = r;
+  await setDoc(doc(fb().db, "rutinas", id), limpiar(resto), { merge: true });
+}
+
 /** Crea las clases base que falten (sin sobreescribir las existentes). */
 export async function crearRutinasBase() {
   const { db } = fb();

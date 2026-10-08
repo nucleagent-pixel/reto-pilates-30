@@ -71,7 +71,7 @@ export default function CheckIn({
               type="button"
               onClick={() => setAnimo(a.valor)}
               className={`flex flex-col items-center gap-1 rounded-2xl py-3 text-[11px] transition ${
-                animo === a.valor ? "bg-terracota text-white" : "bg-arena/60 hover:bg-arena"
+                animo === a.valor ? "bg-salvia text-white" : "bg-niebla/60 hover:bg-niebla"
               }`}
             >
               <span className="text-2xl">{a.emoji}</span>
@@ -82,7 +82,7 @@ export default function CheckIn({
       </div>
 
       <div>
-        <p className="mb-2 text-sm font-medium text-tinta/70">¿Sentiste alguna molestia? (opcional)</p>
+        <p className="mb-2 text-sm font-medium text-carbon/70">¿Sentiste alguna molestia? (opcional)</p>
         <div className="flex flex-wrap gap-2">
           {ZONAS_DOLOR.map((z) => (
             <button
@@ -98,7 +98,7 @@ export default function CheckIn({
         {Object.keys(dolores).length > 0 && (
           <div className="mt-3 space-y-2">
             {Object.entries(dolores).map(([zona, nivel]) => (
-              <div key={zona} className="flex items-center justify-between gap-2 rounded-2xl bg-white px-3 py-2 ring-1 ring-arena">
+              <div key={zona} className="flex items-center justify-between gap-2 rounded-2xl bg-white px-3 py-2 ring-1 ring-niebla">
                 <span className="text-sm">{zona}</span>
                 <div className="flex gap-1">
                   {NIVELES_DOLOR.map((n) => (
@@ -107,7 +107,7 @@ export default function CheckIn({
                       type="button"
                       onClick={() => setDolores((d) => ({ ...d, [zona]: n.valor }))}
                       className={`rounded-full px-3 py-1 text-xs transition ${
-                        nivel === n.valor ? "bg-tinta text-white" : "bg-arena/70"
+                        nivel === n.valor ? "bg-carbon text-white" : "bg-niebla/70"
                       }`}
                     >
                       {n.texto}
@@ -117,7 +117,7 @@ export default function CheckIn({
               </div>
             ))}
             {Object.values(dolores).some((n) => n === 3) && (
-              <p className="rounded-2xl bg-rosa/30 px-3 py-2 text-xs text-tinta/80">
+              <p className="rounded-2xl bg-miel/30 px-3 py-2 text-xs text-carbon/80">
                 Si el dolor es fuerte o no se va, descansa y consulta a un profesional de la salud antes de seguir.
               </p>
             )}

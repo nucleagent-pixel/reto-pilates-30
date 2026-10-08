@@ -33,7 +33,7 @@ function Contenido() {
 
   return (
     <div className="space-y-5">
-      <h1 className="text-3xl">Mi perfil</h1>
+      <h1 className="titular">Mi perfil</h1>
 
       <form onSubmit={guardar} className="tarjeta space-y-4">
         <div>
@@ -49,7 +49,7 @@ function Contenido() {
 
       <div className="tarjeta space-y-2">
         <p className="font-medium">⚠️ Antes de entrenar</p>
-        <p className="text-sm text-tinta/70">{AVISO_SALUD}</p>
+        <p className="text-sm text-carbon/70">{AVISO_SALUD}</p>
       </div>
 
       <div className="flex flex-col gap-3">
@@ -66,7 +66,7 @@ function Contenido() {
             ⚙️ Panel de administración
           </Link>
         )}
-        <button onClick={cerrarSesion} className="py-2 text-sm text-tinta/60 underline-offset-4 hover:underline">
+        <button onClick={cerrarSesion} className="py-2 text-sm text-carbon/60 underline-offset-4 hover:underline">
           Cerrar sesión
         </button>
       </div>

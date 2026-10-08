@@ -17,14 +17,14 @@ export default function NavInferior() {
     href === "/" ? ruta === "/" : ruta.startsWith(href) || (href === "/reto/" && ruta.startsWith("/clase"));
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-arena bg-crema/95 pb-[env(safe-area-inset-bottom)] backdrop-blur">
+    <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-niebla bg-lino/95 pb-[env(safe-area-inset-bottom)] backdrop-blur">
       <ul className="mx-auto flex max-w-xl justify-between px-2">
         {ITEMS.map((it) => (
           <li key={it.href} className="flex-1">
             <Link
               href={it.href}
               className={`flex flex-col items-center gap-1 py-3 text-[11px] font-medium transition ${
-                activo(it.href) ? "text-terracota" : "text-tinta/50 hover:text-tinta"
+                activo(it.href) ? "text-salvia" : "text-carbon/50 hover:text-carbon"
               }`}
             >
               <svg

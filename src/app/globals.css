@@ -7,35 +7,53 @@
 }
 
 body {
-  @apply bg-crema font-cuerpo text-tinta antialiased;
+  @apply bg-lino font-cuerpo text-[17px] leading-relaxed text-carbon antialiased;
 }
 
 h1,
 h2,
 h3 {
-  @apply font-titulo;
+  @apply font-titulo font-semibold leading-[1.05] tracking-tight;
+}
+
+:focus-visible {
+  @apply outline-none ring-2 ring-salvia ring-offset-2 ring-offset-lino;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 @layer components {
+  /* Superficie principal: blanca y plana, como un mat sobre el piso de madera. */
   .tarjeta {
-    @apply rounded-3xl bg-white/80 p-5 shadow-sm ring-1 ring-arena;
+    @apply rounded-[1.75rem] bg-white p-5 ring-1 ring-niebla;
   }
   .boton {
-    @apply inline-flex items-center justify-center gap-2 rounded-full bg-terracota px-5 py-3 font-medium text-white transition hover:brightness-95 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-salvia px-6 py-3.5 font-semibold text-white transition-colors hover:bg-carbon active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
   }
   .boton-sec {
-    @apply inline-flex items-center justify-center gap-2 rounded-full bg-arena px-5 py-3 font-medium text-tinta transition hover:brightness-95 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-salvia-fondo px-6 py-3.5 font-semibold text-carbon transition-colors hover:bg-niebla active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
   }
   .input {
-    @apply w-full rounded-2xl border border-arena bg-white px-4 py-3 outline-none transition placeholder:text-tinta/40 focus:border-terracota focus:ring-2 focus:ring-rosa/40;
+    @apply w-full rounded-2xl border border-niebla bg-white px-4 py-3 outline-none transition placeholder:text-carbon/40 focus:border-salvia focus:ring-2 focus:ring-salvia/20;
   }
   .etiqueta {
-    @apply mb-1 block text-sm font-medium text-tinta/70;
+    @apply mb-1 block text-sm font-medium text-carbon/70;
   }
   .chip {
-    @apply rounded-full bg-arena/60 px-3 py-1.5 text-sm transition hover:bg-arena;
+    @apply rounded-full bg-salvia-fondo px-3 py-1.5 text-sm transition-colors hover:bg-niebla;
   }
   .chip-activo {
-    @apply bg-tinta text-white hover:bg-tinta;
+    @apply bg-carbon text-white hover:bg-carbon;
+  }
+  /* Titulares de pantalla: condensados como el cartel del estudio de Laura. */
+  .titular {
+    @apply font-titulo text-[2.6rem] font-semibold leading-none tracking-tight;
   }
 }

@@ -27,8 +27,8 @@ function Lista() {
   return (
     <div className="space-y-5">
       <header>
-        <h1 className="text-3xl">Rutinas rápidas ⚡</h1>
-        <p className="mt-1 text-tinta/60">Siempre disponibles, para cuando tienes poco tiempo. También suman a tu racha.</p>
+        <h1 className="titular">Rutinas rápidas</h1>
+        <p className="mt-1 text-carbon/60">Siempre disponibles, para cuando tienes poco tiempo. También suman a tu racha.</p>
       </header>
 
       <ul className="grid gap-3 sm:grid-cols-2">
@@ -36,14 +36,14 @@ function Lista() {
           <li key={r.id}>
             <Link
               href={`/clase/?id=${r.id}`}
-              className="tarjeta flex h-full items-center gap-4 transition hover:ring-terracota/40"
+              className="tarjeta flex h-full items-center gap-4 transition hover:ring-salvia/40"
             >
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-rosa/40 font-titulo text-lg">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-miel/40 font-titulo text-lg">
                 {r.orden}
               </div>
               <div className="min-w-0">
                 <p className="truncate font-medium">{r.titulo}</p>
-                <p className="truncate text-sm text-tinta/60">
+                <p className="truncate text-sm text-carbon/60">
                   {[r.duracion, r.zona].filter(Boolean).join(" · ") || "Rutina rápida"}
                 </p>
               </div>

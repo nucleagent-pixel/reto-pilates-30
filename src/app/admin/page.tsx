@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import Protegido from "@/components/Protegido";
 import Cargando from "@/components/Cargando";
-import { cambiarBloqueo, crearRutinasBase, guardarRutina, listarBloqueados, listarUsuarios, obtenerRutinas } from "@/lib/datos";
-import { fechaISO } from "@/lib/progreso";
+import { cambiarBloqueo, crearRutinasBase, guardarRutina, guardarRutinaParcial, listarBloqueados, listarUsuarios, obtenerRutinas } from "@/lib/datos";
+import { fechaISO, idRapida, idReto } from "@/lib/progreso";
 import { resolverVideo } from "@/lib/video";
 import { MARCA } from "@/lib/marca";
 import type { Rutina, UsuarioAdmin } from "@/lib/tipos";
@@ -16,15 +16,15 @@ export default function Admin() {
       <div className="space-y-5">
         <header className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <p className="text-sm text-tinta/60">{MARCA.nombre}</p>
-            <h1 className="text-3xl">Administración</h1>
+            <p className="text-sm text-carbon/60">{MARCA.nombre}</p>
+            <h1 className="titular">Administración</h1>
           </div>
-          <div className="grid grid-cols-2 rounded-full bg-arena/60 p-1 text-sm font-medium">
+          <div className="grid grid-cols-2 rounded-full bg-niebla/60 p-1 text-sm font-medium">
             {(["accesos", "clases"] as const).map((p) => (
               <button
                 key={p}
                 onClick={() => setPestana(p)}
-                className={`rounded-full px-4 py-2 transition ${pestana === p ? "bg-white shadow-sm" : "text-tinta/60"}`}
+                className={`rounded-full px-4 py-2 transition ${pestana === p ? "bg-white shadow-sm" : "text-carbon/60"}`}
               >
                 {p === "accesos" ? "Clientas" : "Clases"}
               </button>
@@ -90,8 +90,8 @@ function Clientas() {
     <div className="space-y-5">
       <div className="tarjeta space-y-3">
         <p className="font-titulo text-xl">Mensaje de bienvenida</p>
-        <p className="text-sm text-tinta/60">Envíalo por WhatsApp después de la compra. Con el link, cualquier persona crea su cuenta y entra.</p>
-        <pre className="whitespace-pre-wrap rounded-2xl bg-arena/40 p-4 font-cuerpo text-sm text-tinta/80">{mensajeBienvenida()}</pre>
+        <p className="text-sm text-carbon/60">Envíalo por WhatsApp después de la compra. Con el link, cualquier persona crea su cuenta y entra.</p>
+        <pre className="whitespace-pre-wrap rounded-2xl bg-niebla/40 p-4 font-cuerpo text-sm text-carbon/80">{mensajeBienvenida()}</pre>
         <button type="button" className="boton" onClick={copiar}>
           {copiado ? "¡Copiado! ✓" : "Copiar mensaje"}
         </button>
@@ -100,11 +100,11 @@ function Clientas() {
       {lista && (
         <div className="grid grid-cols-2 gap-3 text-center">
           <div className="tarjeta py-4">
-            <p className="text-xs text-tinta/60">Registradas</p>
+            <p className="text-xs text-carbon/60">Registradas</p>
             <p className="font-titulo text-2xl">{lista.length}</p>
           </div>
           <div className="tarjeta py-4">
-            <p className="text-xs text-tinta/60">Entrenaron hoy</p>
+            <p className="text-xs text-carbon/60">Entrenaron hoy</p>
             <p className="font-titulo text-2xl">{activasHoy}</p>
           </div>
         </div>
@@ -118,17 +118,17 @@ function Clientas() {
         {!lista ? (
           <Cargando />
         ) : filtradas.length === 0 ? (
-          <p className="tarjeta text-center text-sm text-tinta/60">Todavía no hay clientas registradas.</p>
+          <p className="tarjeta text-center text-sm text-carbon/60">Todavía no hay clientas registradas.</p>
         ) : (
           <ul className="space-y-2">
             {filtradas.map((u) => {
               const bloqueada = bloqueadas.has(u.email);
               const hechos = Object.keys(u.completados).length;
               return (
-                <li key={u.uid} className="flex flex-wrap items-center gap-3 rounded-2xl bg-white/80 px-4 py-3 ring-1 ring-arena">
+                <li key={u.uid} className="flex flex-wrap items-center gap-3 rounded-2xl bg-white/80 px-4 py-3 ring-1 ring-niebla">
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-medium">{u.nombre || u.email}</p>
-                    <p className="truncate text-sm text-tinta/60">
+                    <p className="truncate text-sm text-carbon/60">
                       {[u.nombre ? u.email : null, ultimaActividad(u.diasActivos)].filter(Boolean).join(" · ")}
                     </p>
                   </div>
@@ -142,7 +142,7 @@ function Clientas() {
                       await cargar();
                     }}
                     className={`rounded-full px-3 py-1.5 text-sm font-medium ${
-                      bloqueada ? "bg-red-100 text-red-700" : "bg-salvia/20 text-salvia"
+                      bloqueada ? "bg-red-100 text-red-700" : "bg-madera/20 text-madera"
                     }`}
                     title="Tocar para cambiar"
                   >
@@ -178,10 +178,12 @@ function Clases() {
 
   return (
     <div className="space-y-5">
+      <ImportarClases onListo={cargar} />
+
       {faltan > 0 && (
         <div className="tarjeta space-y-3">
           <p className="font-medium">Faltan {faltan} clases por crear</p>
-          <p className="text-sm text-tinta/60">
+          <p className="text-sm text-carbon/60">
             Crea las {MARCA.totalDias} clases del reto y las {MARCA.totalRapidas} rutinas rápidas. Después solo pegas el link de cada video.
           </p>
           <button
@@ -200,7 +202,7 @@ function Clases() {
       )}
 
       {rutinas.length > 0 && (
-        <p className="text-sm text-tinta/60">
+        <p className="text-sm text-carbon/60">
           {sinVideo === 0 ? "✓ Todas las clases tienen video." : `${sinVideo} clases aún no tienen video.`} Pega el link de Google Drive (compartido como "Cualquier persona con el enlace"). También acepta YouTube,
           Vimeo o Bunny.
         </p>
@@ -218,6 +220,96 @@ function Clases() {
           </section>
         );
       })}
+    </div>
+  );
+}
+
+/**
+ * Carga muchas clases de una vez. Una línea por clase:
+ *   1 | Título | link de Drive | 25 min | Zona
+ *   R1 | Título | link de Drive
+ * El número es el día del reto; con R adelante es una rutina rápida.
+ */
+function interpretarLinea(linea: string): (Partial<Rutina> & { id: string }) | null {
+  const partes = linea.split("|").map((p) => p.trim());
+  if (partes.length < 3) return null;
+  const m = partes[0].match(/^(r|r[aá]pida)?\s*(?:d[ií]a)?\s*(\d{1,2})$/i);
+  if (!m) return null;
+  const rapida = !!m[1];
+  const orden = Number(m[2]);
+  if (!orden || orden > (rapida ? MARCA.totalRapidas : MARCA.totalDias)) return null;
+  return {
+    id: rapida ? idRapida(orden) : idReto(orden),
+    tipo: rapida ? "rapida" : "reto",
+    orden,
+    titulo: partes[1] || (rapida ? `Rutina rápida ${orden}` : `Día ${orden}`),
+    videoUrl: partes[2] || undefined,
+    duracion: partes[3] || undefined,
+    zona: partes[4] || undefined,
+  };
+}
+
+function ImportarClases({ onListo }: { onListo: () => Promise<void> }) {
+  const [abierto, setAbierto] = useState(false);
+  const [texto, setTexto] = useState("");
+  const [estado, setEstado] = useState("");
+  const lineas = texto.split("\n").map((l) => l.trim()).filter(Boolean);
+  const validas = lineas.map(interpretarLinea).filter((r): r is NonNullable<typeof r> => !!r);
+  const invalidas = lineas.length - validas.length;
+
+  async function importar() {
+    setEstado("Guardando…");
+    try {
+      for (const r of validas) await guardarRutinaParcial(r);
+      setEstado(`Listo: ${validas.length} clases guardadas.`);
+      setTexto("");
+      await onListo();
+    } catch (e) {
+      console.error(e);
+      setEstado("No se pudo guardar. Revisa que tu correo esté en admins.");
+    }
+  }
+
+  if (!abierto) {
+    return (
+      <button className="boton-sec w-full" onClick={() => setAbierto(true)}>
+        Cargar varias clases a la vez
+      </button>
+    );
+  }
+
+  return (
+    <div className="tarjeta space-y-3">
+      <p className="font-titulo text-2xl font-semibold">Cargar varias clases</p>
+      <p className="text-sm text-carbon/70">
+        Una línea por clase: número de día, título, link de Drive y, si quieres, duración y zona, separados por{" "}
+        <strong>|</strong>. Para rutinas rápidas pon una R antes del número.
+      </p>
+      <pre className="overflow-x-auto rounded-2xl bg-salvia-fondo p-3 text-xs">{`1 | Activación y respiración | https://drive.google.com/file/d/... | 25 min | Core
+2 | Abdomen profundo | https://drive.google.com/file/d/...
+R1 | Glúteos express | https://drive.google.com/file/d/... | 10 min`}</pre>
+      <textarea
+        rows={8}
+        className="input font-mono text-sm"
+        value={texto}
+        onChange={(e) => setTexto(e.target.value)}
+        placeholder="Pega aquí tu lista"
+      />
+      {lineas.length > 0 && (
+        <p className="text-sm">
+          {validas.length} clases listas para guardar
+          {invalidas > 0 && <span className="text-red-700"> · {invalidas} líneas con formato incorrecto</span>}
+        </p>
+      )}
+      {estado && <p className="text-sm text-salvia">{estado}</p>}
+      <div className="flex gap-2">
+        <button className="boton" disabled={!validas.length} onClick={importar}>
+          Guardar {validas.length || ""} clases
+        </button>
+        <button className="boton-sec" onClick={() => setAbierto(false)}>
+          Cerrar
+        </button>
+      </div>
     </div>
   );
 }
@@ -255,15 +347,15 @@ function EditorRutina({ rutina }: { rutina: Rutina }) {
   );
 
   return (
-    <div className="rounded-2xl bg-white/80 ring-1 ring-arena">
+    <div className="rounded-2xl bg-white/80 ring-1 ring-niebla">
       <button onClick={() => setAbierto(!abierto)} className="flex w-full items-center gap-3 px-4 py-3 text-left">
-        <span className="w-8 font-titulo text-lg text-tinta/50">{r.orden}</span>
+        <span className="w-8 font-titulo text-lg text-carbon/50">{r.orden}</span>
         <span className="min-w-0 flex-1 truncate font-medium">{r.titulo}</span>
-        <span className={`text-xs ${tieneVideo ? "text-salvia" : "text-terracota"}`}>{tieneVideo ? "● Video" : "○ Sin video"}</span>
-        <span className="text-tinta/40">{abierto ? "▴" : "▾"}</span>
+        <span className={`text-xs ${tieneVideo ? "text-madera" : "text-salvia"}`}>{tieneVideo ? "● Video" : "○ Sin video"}</span>
+        <span className="text-carbon/40">{abierto ? "▴" : "▾"}</span>
       </button>
       {abierto && (
-        <form onSubmit={guardar} className="space-y-3 border-t border-arena px-4 py-4">
+        <form onSubmit={guardar} className="space-y-3 border-t border-niebla px-4 py-4">
           {campo("titulo", "Título")}
           {campo("videoUrl", "Link del video (Drive)", "https://drive.google.com/file/d/…")}
           <div className="grid gap-3 sm:grid-cols-2">
@@ -285,7 +377,7 @@ function EditorRutina({ rutina }: { rutina: Rutina }) {
             <button className="boton py-2" disabled={!cambiado || estado === "guardando"}>
               {estado === "guardando" ? "Guardando…" : estado === "ok" ? "Guardado ✓" : "Guardar"}
             </button>
-            <a href={`/clase/?id=${r.id}`} target="_blank" rel="noreferrer" className="text-sm text-tinta/60 hover:underline">
+            <a href={`/clase/?id=${r.id}`} target="_blank" rel="noreferrer" className="text-sm text-carbon/60 hover:underline">
               Ver como clienta ↗
             </a>
             {estado === "error" && <span className="text-sm text-red-700">No se pudo guardar.</span>}

@@ -33,12 +33,12 @@ function Lista() {
   return (
     <div className="space-y-5">
       <header>
-        <h1 className="text-3xl">Tu reto</h1>
-        <p className="mt-1 text-tinta/60">Cada día se desbloquea cuando completas el anterior.</p>
+        <h1 className="titular">Tu reto</h1>
+        <p className="mt-1 text-carbon/60">Cada día se desbloquea cuando completas el anterior.</p>
       </header>
 
       {rutinas.length === 0 && (
-        <p className="tarjeta text-center text-tinta/60">Las clases se están preparando. Vuelve pronto.</p>
+        <p className="tarjeta text-center text-carbon/60">Las clases se están preparando. Vuelve pronto.</p>
       )}
 
       <ul className="space-y-3">
@@ -48,33 +48,33 @@ function Lista() {
           const esActual = r.orden === actual;
           const contenido = (
             <div
-              className={`flex items-center gap-4 rounded-3xl p-4 ring-1 transition ${
+              className={`flex items-center gap-4 rounded-[1.75rem] p-4 ring-1 transition ${
                 esActual
-                  ? "bg-terracota text-white ring-terracota shadow-md"
+                  ? "bg-salvia text-white ring-salvia shadow-md"
                   : hecho
-                    ? "bg-white/80 ring-arena"
+                    ? "bg-white/80 ring-niebla"
                     : abierto
-                      ? "bg-white/80 ring-arena hover:ring-terracota/40"
-                      : "bg-arena/40 text-tinta/40 ring-transparent"
+                      ? "bg-white/80 ring-niebla hover:ring-salvia/40"
+                      : "bg-niebla/40 text-carbon/40 ring-transparent"
               }`}
             >
               <div
                 className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl font-titulo text-lg ${
-                  esActual ? "bg-white/20" : hecho ? "bg-salvia text-white" : "bg-arena"
+                  esActual ? "bg-white/20" : hecho ? "bg-madera text-white" : "bg-niebla"
                 }`}
               >
                 {hecho ? "✓" : abierto ? r.orden : "🔒"}
               </div>
               <div className="min-w-0 flex-1">
-                <p className={`text-xs ${esActual ? "text-white/80" : "text-tinta/50"}`}>Día {r.orden}</p>
+                <p className={`text-xs ${esActual ? "text-white/80" : "text-carbon/50"}`}>Día {r.orden}</p>
                 <p className="truncate font-medium">{r.titulo}</p>
                 {(r.duracion || r.zona) && (
-                  <p className={`truncate text-sm ${esActual ? "text-white/80" : "text-tinta/60"}`}>
+                  <p className={`truncate text-sm ${esActual ? "text-white/80" : "text-carbon/60"}`}>
                     {[r.duracion, r.zona].filter(Boolean).join(" · ")}
                   </p>
                 )}
               </div>
-              {abierto && <span className="text-lg">→</span>}
+              
             </div>
           );
           return (

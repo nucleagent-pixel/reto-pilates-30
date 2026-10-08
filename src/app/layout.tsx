@@ -4,15 +4,16 @@ import { AuthProvider } from "@/components/AuthProvider";
 import { MARCA } from "@/lib/marca";
 
 export const metadata: Metadata = {
-  title: MARCA.nombre,
+  title: `${MARCA.nombre} · ${MARCA.marca} Pilates`,
   description: `${MARCA.eslogan} Tus clases y tu progreso del reto con ${MARCA.instructora}.`,
   robots: { index: false, follow: false },
+  icons: { icon: MARCA.avatar, apple: MARCA.avatar },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#FBF6F1",
+  themeColor: "#F1F0EB",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -23,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@300;500;600;700&display=swap"
         />
       </head>
       <body>

@@ -50,7 +50,7 @@ function Contenido() {
 
   return (
     <div className="space-y-5">
-      <h1 className="text-3xl">Mi progreso</h1>
+      <h1 className="titular">Mi progreso</h1>
 
       <section className="grid grid-cols-3 gap-3 text-center">
         <Dato titulo="Días" valor={`${hechos}/${MARCA.totalDias}`} />
@@ -66,7 +66,7 @@ function Contenido() {
 
       <section className="tarjeta">
         <p className="mb-4 font-titulo text-xl">Registrar</p>
-        <div className="mb-5 grid grid-cols-3 rounded-full bg-arena/60 p-1 text-sm font-medium">
+        <div className="mb-5 grid grid-cols-3 rounded-full bg-niebla/60 p-1 text-sm font-medium">
           {(
             [
               ["peso", "Peso"],
@@ -77,7 +77,7 @@ function Contenido() {
             <button
               key={k}
               onClick={() => setPestana(k)}
-              className={`rounded-full px-2 py-2 transition ${pestana === k ? "bg-white shadow-sm" : "text-tinta/60"}`}
+              className={`rounded-full px-2 py-2 transition ${pestana === k ? "bg-white shadow-sm" : "text-carbon/60"}`}
             >
               {t}
             </button>
@@ -100,19 +100,19 @@ function Contenido() {
       <section>
         <p className="mb-3 font-titulo text-xl">Historial</p>
         {registros.length === 0 ? (
-          <p className="tarjeta text-center text-sm text-tinta/60">
+          <p className="tarjeta text-center text-sm text-carbon/60">
             Aún no tienes registros. Empieza anotando tu peso y medidas de hoy para comparar al final del reto.
           </p>
         ) : (
           <ul className="space-y-2">
             {registros.map((r) => (
-              <li key={r.id} className="flex gap-3 rounded-2xl bg-white/80 px-4 py-3 ring-1 ring-arena">
+              <li key={r.id} className="flex gap-3 rounded-2xl bg-white/80 px-4 py-3 ring-1 ring-niebla">
                 <span className="text-xl">{icono(r)}</span>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium">{resumen(r)}</p>
-                  {r.nota && <p className="text-sm text-tinta/60">“{r.nota}”</p>}
+                  {r.nota && <p className="text-sm text-carbon/60">“{r.nota}”</p>}
                 </div>
-                <span className="shrink-0 text-xs text-tinta/50">
+                <span className="shrink-0 text-xs text-carbon/50">
                   {formatoFecha(r.fecha)}
                   {r.dia ? ` · Día ${r.dia}` : ""}
                 </span>
@@ -128,9 +128,9 @@ function Contenido() {
 function Dato({ titulo, valor, detalle }: { titulo: string; valor: string; detalle?: string }) {
   return (
     <div className="tarjeta px-2 py-4">
-      <p className="text-xs text-tinta/60">{titulo}</p>
+      <p className="text-xs text-carbon/60">{titulo}</p>
       <p className="mt-1 font-titulo text-xl">{valor}</p>
-      {detalle && <p className="text-xs text-tinta/60">{detalle}</p>}
+      {detalle && <p className="text-xs text-carbon/60">{detalle}</p>}
     </div>
   );
 }
@@ -157,7 +157,7 @@ function FormPeso({ onGuardar }: { onGuardar: (peso: number) => Promise<void> })
           onChange={(e) => setValor(e.target.value)}
           aria-label="Peso en kilos"
         />
-        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-tinta/50">kg</span>
+        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-carbon/50">kg</span>
       </div>
       <button className="boton" disabled={guardando || !valor}>
         {guardando ? "…" : "Guardar"}
@@ -197,7 +197,7 @@ function FormMedidas({ onGuardar }: { onGuardar: (m: Record<string, number>) => 
           </div>
         ))}
       </div>
-      <p className="text-xs text-tinta/60">Llena solo las que quieras. Mídete siempre en el mismo lugar y a la misma hora.</p>
+      <p className="text-xs text-carbon/60">Llena solo las que quieras. Mídete siempre en el mismo lugar y a la misma hora.</p>
       <button className="boton w-full" disabled={guardando || !Object.keys(medidas).length}>
         {guardando ? "Guardando…" : "Guardar medidas"}
       </button>
@@ -222,15 +222,15 @@ function GraficoPeso({ registros }: { registros: Registro[] }) {
     <section className="tarjeta">
       <div className="mb-3 flex items-baseline justify-between">
         <p className="font-medium">Tu peso</p>
-        <p className="text-xs text-tinta/50">
+        <p className="text-xs text-carbon/50">
           {formatoFecha(datos[0].fecha)} – {formatoFecha(datos[datos.length - 1].fecha)}
         </p>
       </div>
       <svg viewBox={`-6 -10 ${ancho + 12} ${alto + 20}`} className="h-32 w-full overflow-visible">
-        <path d={`${linea} L${ancho},${alto + 10} L0,${alto + 10} Z`} fill="#E9B9AA" opacity="0.25" />
-        <path d={linea} fill="none" stroke="#C2705A" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+        <path d={`${linea} L${ancho},${alto + 10} L0,${alto + 10} Z`} fill="#D9B88F" opacity="0.25" />
+        <path d={linea} fill="none" stroke="#55684F" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
         {puntos.map(([x, y], i) => (
-          <circle key={i} cx={x} cy={y} r="3.5" fill="#fff" stroke="#C2705A" strokeWidth="2" />
+          <circle key={i} cx={x} cy={y} r="3.5" fill="#fff" stroke="#55684F" strokeWidth="2" />
         ))}
       </svg>
     </section>

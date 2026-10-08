@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "./AuthProvider";
 import Cargando from "./Cargando";
 import NavInferior from "./NavInferior";
+import Marca from "./Marca";
 
 /** Envuelve las páginas privadas: exige sesión y acceso activo (o admin). */
 export default function Protegido({
@@ -32,7 +33,12 @@ export default function Protegido({
 
   return (
     <div className="min-h-dvh pb-28">
-      <main className={`mx-auto ${ancho} px-4 pt-6`}>{children}</main>
+      <main className={`mx-auto ${ancho} px-5 pt-5`}>
+        <div className="mb-6">
+          <Marca />
+        </div>
+        {children}
+      </main>
       <NavInferior />
     </div>
   );
