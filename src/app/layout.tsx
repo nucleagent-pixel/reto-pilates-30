@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: `${MARCA.nombre} · ${MARCA.marca} Pilates`,
   description: `${MARCA.eslogan} Tus clases y tu progreso del reto con ${MARCA.instructora}.`,
   robots: { index: false, follow: false },
-  icons: { icon: MARCA.avatar, apple: MARCA.avatar },
+  icons: { icon: [{ url: "/icono.svg", type: "image/svg+xml" }, { url: "/icono.png", type: "image/png" }], apple: "/icono.png" },
 };
 
 export const viewport: Viewport = {

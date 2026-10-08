@@ -6,7 +6,7 @@ import { updateProfile } from "firebase/auth";
 import Protegido from "@/components/Protegido";
 import { useAuth } from "@/components/AuthProvider";
 import { actualizarNombre } from "@/lib/datos";
-import { AVISO_SALUD, MARCA, linkWhatsapp } from "@/lib/marca";
+import { AVISO_SALUD } from "@/lib/marca";
 
 export default function Perfil() {
   return (
@@ -53,14 +53,6 @@ function Contenido() {
       </div>
 
       <div className="flex flex-col gap-3">
-        <a
-          href={linkWhatsapp(`Hola, necesito ayuda con el ${MARCA.nombre}.`)}
-          target="_blank"
-          rel="noreferrer"
-          className="boton-sec"
-        >
-          💬 Ayuda por WhatsApp
-        </a>
         {esAdmin && (
           <Link href="/admin/" className="boton-sec">
             ⚙️ Panel de administración
