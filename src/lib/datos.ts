@@ -94,18 +94,36 @@ export async function obtenerRegistros(uid: string): Promise<Registro[]> {
 
 // ---------- Rutinas ----------
 
+/**
+ * Las 30 clases vienen incluidas en la app (lib/clases.ts).
+ * Si editaste alguna desde el panel, lo guardado en la base de datos tiene prioridad.
+ * Si la base de datos falla o está vacía, igual se muestran las clases incluidas.
+ */
 export async function obtenerRutinas(tipo?: TipoRutina): Promise<Rutina[]> {
-  const ref = collection(fb().db, "rutinas");
-  const s = await getDocs(tipo ? query(ref, where("tipo", "==", tipo)) : ref);
-  return s.docs
-    .map((d) => ({ id: d.id, ...d.data() }) as Rutina)
-    .sort((a, b) => (a.tipo === b.tipo ? a.orden - b.orden : a.tipo === "reto" ? -1 : 1));
+  const base = new Map(CLASES.filter((c) => !tipo || c.tipo === tipo).map((c) => [c.id, c]));
+  try {
+    const ref = collection(fb().db, "rutinas");
+    const s = await getDocs(tipo ? query(ref, where("tipo", "==", tipo)) : ref);
+    for (const d of s.docs) {
+      const guardada = { id: d.id, ...d.data() } as Rutina;
+      base.set(d.id, { ...(base.get(d.id) ?? {}), ...guardada });
+    }
+  } catch (e) {
+    console.warn("No se pudieron leer las clases guardadas; se usan las incluidas.", e);
+  }
+  return [...base.values()].sort((a, b) => (a.tipo === b.tipo ? a.orden - b.orden : a.tipo === "reto" ? -1 : 1));
 }
 
 export async function obtenerRutina(id: string): Promise<Rutina | null> {
   if (!id) return null;
-  const s = await getDoc(doc(fb().db, "rutinas", id));
-  return s.exists() ? ({ id: s.id, ...s.data() } as Rutina) : null;
+  const incluida = CLASES.find((c) => c.id === id) ?? null;
+  try {
+    const s = await getDoc(doc(fb().db, "rutinas", id));
+    if (s.exists()) return { ...(incluida ?? {}), id: s.id, ...s.data() } as Rutina;
+  } catch (e) {
+    console.warn("No se pudo leer la clase guardada; se usa la incluida.", e);
+  }
+  return incluida;
 }
 
 export async function guardarRutina(r: Rutina) {

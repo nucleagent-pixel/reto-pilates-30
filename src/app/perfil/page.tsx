@@ -17,7 +17,7 @@ export default function Perfil() {
 }
 
 function Contenido() {
-  const { user, perfil, esAdmin, refrescarPerfil, cerrarSesion } = useAuth();
+  const { user, perfil, esAdmin, diagnostico, refrescarPerfil, cerrarSesion } = useAuth();
   const [nombre, setNombre] = useState(perfil?.nombre ?? "");
   const [guardado, setGuardado] = useState(false);
 
@@ -69,6 +69,7 @@ function Contenido() {
         <button onClick={cerrarSesion} className="py-2 text-sm text-carbon/60 underline-offset-4 hover:underline">
           Cerrar sesión
         </button>
+        <p className="break-all text-center text-xs text-carbon/40">{diagnostico}</p>
       </div>
     </div>
   );

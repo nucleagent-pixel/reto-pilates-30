@@ -12,6 +12,7 @@ interface EstadoAuth {
   cargando: boolean;
   tieneAcceso: boolean;
   esAdmin: boolean;
+  diagnostico: string;
   perfil: PerfilUsuario | null;
   refrescarPerfil: () => Promise<void>;
   cerrarSesion: () => Promise<void>;
@@ -24,6 +25,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [cargando, setCargando] = useState(true);
   const [tieneAcceso, setTieneAcceso] = useState(false);
   const [esAdmin, setEsAdmin] = useState(false);
+  const [diagnostico, setDiagnostico] = useState("");
   const [perfil, setPerfil] = useState<PerfilUsuario | null>(null);
 
   useEffect(() => {
@@ -40,10 +42,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       const email = u.email.toLowerCase();
       // Cualquier persona con cuenta entra, salvo que la hayas bloqueado desde el panel.
+      let errorAdmin = "";
       const [adm, bloq] = await Promise.all([
-        getDoc(doc(db, "admins", email)).catch(() => null),
+        getDoc(doc(db, "admins", email)).catch((e) => {
+          errorAdmin = (e as { code?: string }).code ?? String(e);
+          return null;
+        }),
         getDoc(doc(db, "bloqueados", email)).catch(() => null),
       ]);
+      setDiagnostico(
+        `Proyecto: ${db.app.options.projectId ?? "sin configurar"} · Correo: ${email} · Admin: ${
+          adm?.exists() ? "sí" : errorAdmin ? `error (${errorAdmin})` : "no encontrado en admins"
+        }`,
+      );
       const admin = !!adm?.exists();
       const acceso = admin || !bloq?.exists();
       setEsAdmin(admin);
@@ -71,7 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <Contexto.Provider
-      value={{ user, cargando, tieneAcceso, esAdmin, perfil, refrescarPerfil, cerrarSesion }}
+      value={{ user, cargando, tieneAcceso, esAdmin, diagnostico, perfil, refrescarPerfil, cerrarSesion }}
     >
       {children}
     </Contexto.Provider>

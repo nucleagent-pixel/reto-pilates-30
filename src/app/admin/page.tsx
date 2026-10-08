@@ -173,35 +173,32 @@ function Clases() {
 
   if (!rutinas) return <Cargando />;
 
-  const faltan = MARCA.totalDias + MARCA.totalRapidas - rutinas.length;
   const sinVideo = rutinas.filter((r) => !resolverVideo(r.videoUrl)).length;
 
   return (
     <div className="space-y-5">
       
-      <div className={`tarjeta space-y-3 ${faltan > 0 ? "ring-2 ring-salvia" : ""}`}>
-        <p className="font-titulo text-2xl font-semibold">
-          {faltan > 0 ? `Faltan ${faltan} clases por cargar` : `Las ${MARCA.totalReto} clases están cargadas`}
-        </p>
+      <div className="tarjeta space-y-3">
+        <p className="font-titulo text-2xl font-semibold">Las {MARCA.totalReto} clases ya están en la app</p>
         <p className="text-sm text-carbon/70">
-          Carga las {MARCA.totalDias} clases del reto y las {MARCA.totalRapidas} rutinas rápidas con sus títulos, videos de Drive y
-          categorías. Si ya existen, se actualizan títulos y videos; las descripciones y PDFs que hayas escrito se conservan.
+          Vienen incluidas con sus títulos y videos. Si editas una aquí abajo, tu cambio reemplaza la versión incluida. Usa
+          este botón solo si quieres volver a los títulos y videos originales.
         </p>
         <button
-          className={faltan > 0 ? "boton" : "boton-sec"}
+          className="boton-sec"
           disabled={creando}
           onClick={async () => {
-            if (faltan === 0 && !confirm("Esto vuelve a poner los títulos y videos originales. ¿Continuar?")) return;
+            if (!confirm("Esto vuelve a poner los títulos y videos originales. ¿Continuar?")) return;
             setCreando(true);
             await cargarClases().catch((e) => {
               console.error(e);
-              alert("No se pudo cargar. Revisa que tu correo esté en la colección admins.");
+              alert("No se pudo guardar. Revisa que tu correo esté en la colección admins.");
             });
             await cargar();
             setCreando(false);
           }}
         >
-          {creando ? "Cargando…" : faltan > 0 ? `Cargar las ${MARCA.totalReto} clases` : "Volver a cargar las clases originales"}
+          {creando ? "Restaurando…" : "Restaurar clases originales"}
         </button>
       </div>
 
