@@ -123,7 +123,7 @@ function Contenido() {
           </p>
         </Link>
       ) : (
-        <ImagenSeccion src="/inicio/reto-completo.jpg" className="rounded-[2rem] bg-madera p-6 text-white">
+        <ImagenSeccion src="/inicio/reto-completo.png" className="rounded-[2rem] bg-madera p-6 text-white">
           <p className="font-titulo text-6xl font-bold leading-[0.9]">Reto completado</p>
           <p className="mt-3 max-w-xs text-white/90">
             Terminaste los {MARCA.totalReto} días. Mira todo lo que cambiaste desde el inicio.
@@ -245,10 +245,10 @@ function Contenido() {
       <section aria-label="Mi proceso">
         <h2 className="mb-3 font-titulo text-3xl font-semibold">Mi proceso</h2>
         <div className="grid grid-cols-2 gap-3">
-          <Atajo href="/progreso/?s=calendario" titulo="Calendario" texto="Tus días entrenados" imagen="/inicio/calendario.jpg" color="bg-salvia" />
-          <Atajo href="/progreso/?s=objetivos" titulo="Objetivos" texto="Lo que quieres lograr" imagen="/inicio/objetivos.jpg" color="bg-madera" />
-          <Atajo href="/progreso/?s=medidas" titulo="Medidas" texto="Peso y centímetros" imagen="/inicio/medidas.jpg" color="bg-[#7A8A6F]" />
-          <Atajo href="/progreso/?s=diario" titulo="Diario" texto="Cómo lo estás viviendo" imagen="/inicio/diario.jpg" color="bg-carbon" />
+          <Atajo href="/progreso/?s=calendario" titulo="Calendario" texto="Tus días entrenados" imagen="/inicio/calendario.png" color="bg-salvia" />
+          <Atajo href="/progreso/?s=objetivos" titulo="Objetivos" texto="Lo que quieres lograr" imagen="/inicio/objetivos.png" color="bg-madera" />
+          <Atajo href="/progreso/?s=medidas" titulo="Medidas" texto="Peso y centímetros" imagen="/inicio/medidas.png" color="bg-[#7A8A6F]" />
+          <Atajo href="/progreso/?s=diario" titulo="Diario" texto="Cómo lo estás viviendo" imagen="/inicio/diario.png" color="bg-carbon" />
         </div>
       </section>
     </div>
