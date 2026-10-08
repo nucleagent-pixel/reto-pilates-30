@@ -53,7 +53,7 @@ function Lista() {
                 href={`/clase/?id=${r.id}`}
                 className="block h-full rounded-[1.5rem] bg-white p-2.5 ring-1 ring-niebla transition-colors hover:ring-salvia/50"
               >
-                <Miniatura categoria={r.categoria} texto={hecha ? "✓" : ""} tam="aspect-square w-full" />
+                <Miniatura categoria={r.categoria} videoUrl={r.videoUrl} texto={hecha ? "✓" : ""} tam="aspect-video w-full" />
                 <div className="px-1.5 pb-1 pt-2.5">
                   <p className="font-semibold leading-tight">{r.titulo}</p>
                   <p className="mt-0.5 text-sm text-carbon/60">

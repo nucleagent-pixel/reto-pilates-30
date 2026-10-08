@@ -1,13 +1,49 @@
+"use client";
+
+import { useState } from "react";
 import { MARCA } from "@/lib/marca";
 
-/** Logotipo de texto: nombre en condensada pesada, "pilates" ligera debajo. */
-export default function Marca({ claro = false, grande = false }: { claro?: boolean; grande?: boolean }) {
+/** Símbolo provisional: un aro de pilates con la curva de una columna en "roll up". */
+export function Simbolo({ tam = 36, claro = false }: { tam?: number; claro?: boolean }) {
+  const trazo = claro ? "#FFFFFF" : "#55684F";
   return (
-    <div className={`font-titulo leading-none ${claro ? "text-white" : "text-carbon"}`}>
-      <p className={`${grande ? "text-5xl" : "text-2xl"} font-bold tracking-tight`}>{MARCA.marca.toLowerCase()}</p>
-      <p className={`${grande ? "text-2xl" : "text-sm"} font-light tracking-[0.3em] ${claro ? "text-white/85" : "text-salvia"}`}>
-        pilates
-      </p>
+    <svg width={tam} height={tam} viewBox="0 0 48 48" aria-hidden className="shrink-0">
+      <circle cx="24" cy="24" r="20" fill="none" stroke={trazo} strokeWidth="3.5" />
+      <path d="M14 33c3-1 6-3.5 8-7.5S25.5 16 31 14" fill="none" stroke={claro ? "#F1F0EB" : "#A87C55"} strokeWidth="3.5" strokeLinecap="round" />
+      <circle cx="33.5" cy="12.8" r="2.6" fill={claro ? "#F1F0EB" : "#A87C55"} />
+    </svg>
+  );
+}
+
+/**
+ * Logo de la marca. Si subes tu logo a public/marca/logo.png (fondo transparente),
+ * se usa automáticamente; mientras tanto se muestra el símbolo con el nombre en texto.
+ */
+export default function Marca({ claro = false, grande = false }: { claro?: boolean; grande?: boolean }) {
+  const [sinLogo, setSinLogo] = useState(false);
+  const archivo = claro ? "/marca/logo-blanco.png" : "/marca/logo.png";
+
+  if (!sinLogo) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={archivo}
+        alt={`${MARCA.marca} Pilates`}
+        className={grande ? "h-20 w-auto" : "h-10 w-auto"}
+        onError={() => setSinLogo(true)}
+      />
+    );
+  }
+
+  return (
+    <div className={`flex items-center gap-2.5 font-titulo leading-none ${claro ? "text-white" : "text-carbon"}`}>
+      <Simbolo tam={grande ? 56 : 34} claro={claro} />
+      <div>
+        <p className={`${grande ? "text-5xl" : "text-2xl"} font-bold tracking-tight`}>{MARCA.marca.toLowerCase()}</p>
+        <p className={`${grande ? "text-2xl" : "text-sm"} font-light tracking-[0.3em] ${claro ? "text-white/85" : "text-salvia"}`}>
+          pilates
+        </p>
+      </div>
     </div>
   );
 }

@@ -62,7 +62,7 @@ function Lista() {
                     : "bg-transparent text-carbon/50 ring-niebla"
               }`}
             >
-              <Miniatura categoria={r.categoria} texto={hecho ? "✓" : String(r.orden)} apagada={!abierto} />
+              <Miniatura categoria={r.categoria} videoUrl={r.videoUrl} texto={hecho ? "✓" : String(r.orden)} apagada={!abierto} tam="h-16 w-24" />
               <div className="min-w-0 flex-1">
                 <p className={`text-sm ${esActual ? "text-white/80" : "text-carbon/60"}`}>
                   Día {r.orden}

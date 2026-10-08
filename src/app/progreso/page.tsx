@@ -33,6 +33,12 @@ function Contenido() {
   const [registros, setRegistros] = useState<Registro[] | null>(null);
   const [seccion, setSeccion] = useState<Seccion>("calendario");
 
+  // Abre la sección indicada en el enlace, p. ej. /progreso/?s=diario
+  useEffect(() => {
+    const s = new URLSearchParams(window.location.search).get("s");
+    if (s && SECCIONES.some((x) => x.id === s)) setSeccion(s as Seccion);
+  }, []);
+
   const cargar = useCallback(async () => {
     if (!user) return;
     setRegistros(await obtenerRegistros(user.uid).catch(() => []));
