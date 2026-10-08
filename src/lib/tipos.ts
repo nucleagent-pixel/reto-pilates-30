@@ -14,20 +14,16 @@ export interface Rutina {
   pdfUrl?: string;
 }
 
-export interface Acceso {
-  email: string;
-  nombre?: string;
-  whatsapp?: string;
-  pais?: string;
-  activo: boolean;
-  creado?: Timestamp | null;
-}
-
 export interface PerfilUsuario {
   email: string;
   nombre: string;
   completados: Record<string, Timestamp | null>; // clave = número de día
   diasActivos: string[]; // fechas AAAA-MM-DD con actividad (para la racha)
+}
+
+export interface UsuarioAdmin extends PerfilUsuario {
+  uid: string;
+  creado?: Timestamp | null;
 }
 
 export type TipoRegistro = "peso" | "medidas" | "animo" | "dolor";

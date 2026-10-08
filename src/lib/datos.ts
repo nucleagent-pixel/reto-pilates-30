@@ -2,6 +2,7 @@ import {
   addDoc,
   arrayUnion,
   collection,
+  deleteDoc,
   doc,
   FieldPath,
   getDoc,
@@ -19,7 +20,7 @@ import type { User } from "firebase/auth";
 import { fb } from "./firebase";
 import { fechaISO, idRapida, idReto } from "./progreso";
 import { MARCA } from "./marca";
-import type { Acceso, PerfilUsuario, Registro, Rutina, TipoRutina } from "./tipos";
+import type { PerfilUsuario, Registro, Rutina, TipoRutina, UsuarioAdmin } from "./tipos";
 
 /** Firestore no acepta campos "undefined": los quitamos. */
 function limpiar<T extends object>(obj: T): T {
@@ -42,13 +43,13 @@ export async function obtenerPerfil(uid: string) {
   return s.exists() ? aPerfil(s.data()) : null;
 }
 
-export async function asegurarPerfil(u: User, nombreAcceso?: string) {
+export async function asegurarPerfil(u: User) {
   const ref = doc(fb().db, "usuarios", u.uid);
   const s = await getDoc(ref);
   if (s.exists()) return aPerfil(s.data());
   const nuevo = {
     email: (u.email ?? "").toLowerCase(),
-    nombre: u.displayName || nombreAcceso || "",
+    nombre: u.displayName || "",
     completados: {},
     diasActivos: [],
   };
@@ -149,32 +150,22 @@ export async function crearRutinasBase() {
   return creadas;
 }
 
-// ---------- Accesos (panel de admin) ----------
+// ---------- Clientas (panel de admin) ----------
 
-export async function listarAccesos(): Promise<Acceso[]> {
-  const s = await getDocs(collection(fb().db, "accesos"));
+export async function listarUsuarios(): Promise<UsuarioAdmin[]> {
+  const s = await getDocs(collection(fb().db, "usuarios"));
   return s.docs
-    .map((d) => d.data() as Acceso)
+    .map((d) => ({ ...aPerfil(d.data()), uid: d.id, creado: (d.data().creado as UsuarioAdmin["creado"]) ?? null }))
     .sort((a, b) => (b.creado?.toMillis() ?? 0) - (a.creado?.toMillis() ?? 0));
 }
 
-export async function guardarAcceso(datos: Omit<Acceso, "activo" | "creado">) {
-  const email = datos.email.trim().toLowerCase();
-  const ref = doc(fb().db, "accesos", email);
-  const existe = (await getDoc(ref)).exists();
-  await setDoc(
-    ref,
-    limpiar({
-      ...datos,
-      email,
-      activo: true,
-      ...(existe ? {} : { creado: serverTimestamp() }),
-    }),
-    { merge: true },
-  );
-  return email;
+export async function listarBloqueados(): Promise<string[]> {
+  const s = await getDocs(collection(fb().db, "bloqueados"));
+  return s.docs.map((d) => d.id);
 }
 
-export async function cambiarActivo(email: string, activo: boolean) {
-  await updateDoc(doc(fb().db, "accesos", email), { activo });
+export async function cambiarBloqueo(email: string, bloquear: boolean) {
+  const ref = doc(fb().db, "bloqueados", email.toLowerCase());
+  if (bloquear) await setDoc(ref, { email: email.toLowerCase(), fecha: serverTimestamp() });
+  else await deleteDoc(ref);
 }

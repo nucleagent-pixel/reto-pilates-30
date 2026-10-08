@@ -39,18 +39,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
       const email = u.email.toLowerCase();
-      const [adm, acc] = await Promise.all([
+      // Cualquier persona con cuenta entra, salvo que la hayas bloqueado desde el panel.
+      const [adm, bloq] = await Promise.all([
         getDoc(doc(db, "admins", email)).catch(() => null),
-        getDoc(doc(db, "accesos", email)).catch(() => null),
+        getDoc(doc(db, "bloqueados", email)).catch(() => null),
       ]);
       const admin = !!adm?.exists();
-      const datosAcceso = acc?.exists() ? acc.data() : null;
-      const acceso = admin || datosAcceso?.activo === true;
+      const acceso = admin || !bloq?.exists();
       setEsAdmin(admin);
       setTieneAcceso(acceso);
       if (acceso) {
         try {
-          setPerfil(await asegurarPerfil(u, datosAcceso?.nombre));
+          setPerfil(await asegurarPerfil(u));
         } catch (e) {
           console.error("No se pudo cargar el perfil", e);
         }

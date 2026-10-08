@@ -97,7 +97,7 @@ export default function Login() {
 
         {modo === "crear" && (
           <p className="mb-4 rounded-2xl bg-rosa/25 px-4 py-3 text-sm">
-            Usa el <strong>mismo correo</strong> que nos diste al comprar el reto.
+            Crea tu cuenta con tu correo y una contraseña. ¡Así guardamos tu progreso del reto! 💪
           </p>
         )}
         {modo === "recuperar" && (

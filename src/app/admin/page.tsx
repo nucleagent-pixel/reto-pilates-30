@@ -3,11 +3,11 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import Protegido from "@/components/Protegido";
 import Cargando from "@/components/Cargando";
-import { cambiarActivo, crearRutinasBase, guardarAcceso, guardarRutina, listarAccesos, obtenerRutinas } from "@/lib/datos";
-import { formatoFecha } from "@/lib/progreso";
+import { cambiarBloqueo, crearRutinasBase, guardarRutina, listarBloqueados, listarUsuarios, obtenerRutinas } from "@/lib/datos";
+import { fechaISO } from "@/lib/progreso";
 import { resolverVideo } from "@/lib/video";
 import { MARCA } from "@/lib/marca";
-import type { Acceso, Rutina } from "@/lib/tipos";
+import type { Rutina, UsuarioAdmin } from "@/lib/tipos";
 
 export default function Admin() {
   const [pestana, setPestana] = useState<"accesos" | "clases">("accesos");
@@ -31,7 +31,7 @@ export default function Admin() {
             ))}
           </div>
         </header>
-        {pestana === "accesos" ? <Accesos /> : <Clases />}
+        {pestana === "accesos" ? <Clientas /> : <Clases />}
       </div>
     </Protegido>
   );
@@ -39,158 +39,118 @@ export default function Admin() {
 
 // ---------------- Clientas ----------------
 
-function mensajeBienvenida(a: { nombre?: string; email: string }) {
+function mensajeBienvenida() {
   const url = typeof window !== "undefined" ? window.location.origin : "";
-  return `¡Hola${a.nombre ? ` ${a.nombre.split(" ")[0]}` : ""}! 🎉 Ya tienes acceso al ${MARCA.nombre}.
+  return `¡Hola! 🎉 Ya tienes tu acceso al ${MARCA.nombre}.
 
 1. Entra aquí: ${url}/login/
-2. Toca "Crear cuenta" y usa este correo: ${a.email}
-3. Crea tu contraseña y ¡empieza con el Día 1!
+2. Toca "Crear cuenta" con tu correo y crea tu contraseña.
+3. ¡Empieza con el Día 1!
 
 Cualquier duda, escríbenos por aquí 💛`;
 }
 
-function Accesos() {
-  const [lista, setLista] = useState<Acceso[] | null>(null);
-  const [form, setForm] = useState({ email: "", nombre: "", whatsapp: "", pais: "" });
-  const [guardando, setGuardando] = useState(false);
-  const [mensaje, setMensaje] = useState("");
-  const [copiado, setCopiado] = useState("");
+function ultimaActividad(dias: string[]) {
+  if (!dias.length) return "Sin actividad";
+  const ultima = [...dias].sort().pop()!;
+  const [a, m, d] = ultima.split("-").map(Number);
+  return "Última vez: " + new Date(a, m - 1, d).toLocaleDateString("es", { day: "numeric", month: "short" });
+}
+
+function Clientas() {
+  const [lista, setLista] = useState<UsuarioAdmin[] | null>(null);
+  const [bloqueadas, setBloqueadas] = useState<Set<string>>(new Set());
   const [busqueda, setBusqueda] = useState("");
-  const [error, setError] = useState("");
+  const [copiado, setCopiado] = useState(false);
 
   const cargar = useCallback(async () => {
-    setLista(await listarAccesos().catch(() => []));
+    const [usuarios, bloq] = await Promise.all([
+      listarUsuarios().catch(() => []),
+      listarBloqueados().catch(() => [] as string[]),
+    ]);
+    setLista(usuarios);
+    setBloqueadas(new Set(bloq));
   }, []);
   useEffect(() => {
     cargar();
   }, [cargar]);
 
-  async function agregar(e: FormEvent) {
-    e.preventDefault();
-    setError("");
-    if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) {
-      setError("Revisa el correo.");
-      return;
-    }
-    setGuardando(true);
-    try {
-      const email = await guardarAcceso({
-        email: form.email,
-        nombre: form.nombre.trim() || undefined,
-        whatsapp: form.whatsapp.trim() || undefined,
-        pais: form.pais || undefined,
-      });
-      setMensaje(mensajeBienvenida({ nombre: form.nombre, email }));
-      setForm({ email: "", nombre: "", whatsapp: "", pais: "" });
-      await cargar();
-    } catch (err) {
-      console.error(err);
-      setError("No se pudo guardar. ¿Tu correo está en la colección admins?");
-    } finally {
-      setGuardando(false);
-    }
+  async function copiar() {
+    await navigator.clipboard.writeText(mensajeBienvenida());
+    setCopiado(true);
+    setTimeout(() => setCopiado(false), 1800);
   }
 
-  async function copiar(texto: string, clave: string) {
-    await navigator.clipboard.writeText(texto);
-    setCopiado(clave);
-    setTimeout(() => setCopiado(""), 1800);
-  }
-
-  const filtradas = (lista ?? []).filter((a) =>
-    [a.email, a.nombre, a.whatsapp, a.pais].join(" ").toLowerCase().includes(busqueda.toLowerCase()),
+  const filtradas = (lista ?? []).filter((u) =>
+    [u.email, u.nombre].join(" ").toLowerCase().includes(busqueda.toLowerCase()),
   );
+  const activasHoy = (lista ?? []).filter((u) => u.diasActivos.includes(fechaISO())).length;
 
   return (
     <div className="space-y-5">
-      <form onSubmit={agregar} className="tarjeta space-y-4">
-        <div>
-          <p className="font-titulo text-xl">Activar clienta</p>
-          <p className="text-sm text-tinta/60">Cuando confirmes el pago, agrega su correo. Ella crea su cuenta con ese mismo correo.</p>
-        </div>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div>
-            <label className="etiqueta" htmlFor="a-email">Correo *</label>
-            <input id="a-email" type="email" required className="input" value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })} />
-          </div>
-          <div>
-            <label className="etiqueta" htmlFor="a-nombre">Nombre</label>
-            <input id="a-nombre" className="input" value={form.nombre}
-              onChange={(e) => setForm({ ...form, nombre: e.target.value })} />
-          </div>
-          <div>
-            <label className="etiqueta" htmlFor="a-wa">WhatsApp</label>
-            <input id="a-wa" inputMode="tel" className="input" placeholder="+57 300…" value={form.whatsapp}
-              onChange={(e) => setForm({ ...form, whatsapp: e.target.value })} />
-          </div>
-          <div>
-            <label className="etiqueta" htmlFor="a-pais">País</label>
-            <select id="a-pais" className="input" value={form.pais} onChange={(e) => setForm({ ...form, pais: e.target.value })}>
-              <option value="">—</option>
-              {["Colombia", "Venezuela", "Chile", "Bolivia", "Perú", "Ecuador", "México", "Argentina", "Otro"].map((p) => (
-                <option key={p}>{p}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-        {error && <p className="text-sm text-red-700">{error}</p>}
-        <button className="boton w-full sm:w-auto" disabled={guardando}>
-          {guardando ? "Activando…" : "Activar acceso"}
+      <div className="tarjeta space-y-3">
+        <p className="font-titulo text-xl">Mensaje de bienvenida</p>
+        <p className="text-sm text-tinta/60">Envíalo por WhatsApp después de la compra. Con el link, cualquier persona crea su cuenta y entra.</p>
+        <pre className="whitespace-pre-wrap rounded-2xl bg-arena/40 p-4 font-cuerpo text-sm text-tinta/80">{mensajeBienvenida()}</pre>
+        <button type="button" className="boton" onClick={copiar}>
+          {copiado ? "¡Copiado! ✓" : "Copiar mensaje"}
         </button>
+      </div>
 
-        {mensaje && (
-          <div className="rounded-2xl bg-salvia/15 p-4 ring-1 ring-salvia/40">
-            <p className="mb-2 text-sm font-medium">✓ Acceso activado. Envíale este mensaje:</p>
-            <pre className="whitespace-pre-wrap font-cuerpo text-sm text-tinta/80">{mensaje}</pre>
-            <button type="button" className="boton-sec mt-3" onClick={() => copiar(mensaje, "nuevo")}>
-              {copiado === "nuevo" ? "¡Copiado! ✓" : "Copiar mensaje"}
-            </button>
+      {lista && (
+        <div className="grid grid-cols-2 gap-3 text-center">
+          <div className="tarjeta py-4">
+            <p className="text-xs text-tinta/60">Registradas</p>
+            <p className="font-titulo text-2xl">{lista.length}</p>
           </div>
-        )}
-      </form>
+          <div className="tarjeta py-4">
+            <p className="text-xs text-tinta/60">Entrenaron hoy</p>
+            <p className="font-titulo text-2xl">{activasHoy}</p>
+          </div>
+        </div>
+      )}
 
       <section className="space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="font-titulo text-xl">
-            Clientas {lista && <span className="text-base text-tinta/50">({lista.filter((a) => a.activo).length} activas)</span>}
-          </p>
+          <p className="font-titulo text-xl">Clientas</p>
           <input className="input max-w-xs py-2" placeholder="Buscar…" value={busqueda} onChange={(e) => setBusqueda(e.target.value)} />
         </div>
         {!lista ? (
           <Cargando />
         ) : filtradas.length === 0 ? (
-          <p className="tarjeta text-center text-sm text-tinta/60">No hay clientas todavía.</p>
+          <p className="tarjeta text-center text-sm text-tinta/60">Todavía no hay clientas registradas.</p>
         ) : (
           <ul className="space-y-2">
-            {filtradas.map((a) => (
-              <li key={a.email} className="flex flex-wrap items-center gap-3 rounded-2xl bg-white/80 px-4 py-3 ring-1 ring-arena">
-                <div className="min-w-0 flex-1">
-                  <p className="truncate font-medium">{a.nombre || a.email}</p>
-                  <p className="truncate text-sm text-tinta/60">
-                    {[a.nombre ? a.email : null, a.whatsapp, a.pais, a.creado ? formatoFecha(a.creado) : null]
-                      .filter(Boolean)
-                      .join(" · ")}
-                  </p>
-                </div>
-                <button className="chip" onClick={() => copiar(mensajeBienvenida(a), a.email)}>
-                  {copiado === a.email ? "Copiado ✓" : "Copiar mensaje"}
-                </button>
-                <button
-                  onClick={async () => {
-                    await cambiarActivo(a.email, !a.activo);
-                    await cargar();
-                  }}
-                  className={`rounded-full px-3 py-1.5 text-sm font-medium ${
-                    a.activo ? "bg-salvia/20 text-salvia" : "bg-red-100 text-red-700"
-                  }`}
-                  title="Tocar para cambiar"
-                >
-                  {a.activo ? "Activa" : "Desactivada"}
-                </button>
-              </li>
-            ))}
+            {filtradas.map((u) => {
+              const bloqueada = bloqueadas.has(u.email);
+              const hechos = Object.keys(u.completados).length;
+              return (
+                <li key={u.uid} className="flex flex-wrap items-center gap-3 rounded-2xl bg-white/80 px-4 py-3 ring-1 ring-arena">
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-medium">{u.nombre || u.email}</p>
+                    <p className="truncate text-sm text-tinta/60">
+                      {[u.nombre ? u.email : null, ultimaActividad(u.diasActivos)].filter(Boolean).join(" · ")}
+                    </p>
+                  </div>
+                  <span className="chip">
+                    Día {hechos}/{MARCA.totalDias}
+                  </span>
+                  <button
+                    onClick={async () => {
+                      if (!bloqueada && !confirm(`¿Bloquear a ${u.email}? No podrá entrar a la web.`)) return;
+                      await cambiarBloqueo(u.email, !bloqueada);
+                      await cargar();
+                    }}
+                    className={`rounded-full px-3 py-1.5 text-sm font-medium ${
+                      bloqueada ? "bg-red-100 text-red-700" : "bg-salvia/20 text-salvia"
+                    }`}
+                    title="Tocar para cambiar"
+                  >
+                    {bloqueada ? "Bloqueada" : "Activa"}
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         )}
       </section>
