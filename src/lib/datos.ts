@@ -1,5 +1,6 @@
 import {
   addDoc,
+  arrayRemove,
   arrayUnion,
   collection,
   deleteDoc,
@@ -20,7 +21,7 @@ import type { User } from "firebase/auth";
 import { fb } from "./firebase";
 import { fechaISO } from "./progreso";
 import { CLASES } from "./clases";
-import type { PerfilUsuario, Registro, Rutina, TipoRutina, UsuarioAdmin } from "./tipos";
+import type { Objetivo, PerfilUsuario, Registro, Rutina, TipoRutina, UsuarioAdmin } from "./tipos";
 
 /** Firestore no acepta campos "undefined": los quitamos. */
 function limpiar<T extends object>(obj: T): T {
@@ -35,6 +36,8 @@ function aPerfil(d: Record<string, unknown>): PerfilUsuario {
     nombre: (d.nombre as string) ?? "",
     completados: (d.completados as PerfilUsuario["completados"]) ?? {},
     diasActivos: (d.diasActivos as string[]) ?? [],
+    objetivos: (d.objetivos as PerfilUsuario["objetivos"]) ?? [],
+    motivo: (d.motivo as string) ?? "",
   };
 }
 
@@ -57,6 +60,10 @@ export async function asegurarPerfil(u: User) {
   return aPerfil(nuevo);
 }
 
+export async function guardarObjetivos(uid: string, objetivos: Objetivo[], motivo: string) {
+  await updateDoc(doc(fb().db, "usuarios", uid), { objetivos, motivo });
+}
+
 export async function actualizarNombre(uid: string, nombre: string) {
   await updateDoc(doc(fb().db, "usuarios", uid), { nombre });
 }
@@ -74,6 +81,11 @@ export async function completarClase(uid: string, clave: string) {
 
 export async function registrarActividad(uid: string) {
   await updateDoc(doc(fb().db, "usuarios", uid), { diasActivos: arrayUnion(fechaISO()) });
+}
+
+/** Marcar o desmarcar a mano un día del calendario (AAAA-MM-DD). */
+export async function marcarDiaCalendario(uid: string, fecha: string, marcar: boolean) {
+  await updateDoc(doc(fb().db, "usuarios", uid), { diasActivos: marcar ? arrayUnion(fecha) : arrayRemove(fecha) });
 }
 
 // ---------- Registros (peso, medidas, ánimo, dolor) ----------

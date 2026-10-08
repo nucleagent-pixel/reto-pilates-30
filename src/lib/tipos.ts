@@ -22,6 +22,13 @@ export interface PerfilUsuario {
   nombre: string;
   completados: Record<string, Timestamp | null>; // "1".."21" días del reto, "r1".."r9" rutinas rápidas
   diasActivos: string[]; // fechas AAAA-MM-DD con actividad (para la racha)
+  objetivos: Objetivo[];
+  motivo: string; // "¿Por qué empiezas este reto?"
+}
+
+export interface Objetivo {
+  texto: string;
+  logrado: boolean;
 }
 
 export interface UsuarioAdmin extends PerfilUsuario {
@@ -29,7 +36,7 @@ export interface UsuarioAdmin extends PerfilUsuario {
   creado?: Timestamp | null;
 }
 
-export type TipoRegistro = "peso" | "medidas" | "animo" | "dolor";
+export type TipoRegistro = "peso" | "medidas" | "animo" | "dolor" | "diario";
 
 export interface Dolor {
   zona: string;
@@ -45,5 +52,6 @@ export interface Registro {
   animo?: number;
   dolores?: Dolor[];
   nota?: string;
+  texto?: string; // entrada del diario
   dia?: number;
 }

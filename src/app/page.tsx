@@ -158,8 +158,8 @@ function Contenido() {
         </Link>
         <Link href="/progreso/" className="flex items-center justify-between gap-4 px-5 py-4 transition-colors hover:bg-salvia-fondo">
           <span>
-            <span className="block font-semibold">Registrar mi progreso</span>
-            <span className="block text-sm text-carbon/70">Peso, medidas y cómo te sientes</span>
+            <span className="block font-semibold">Mi proceso</span>
+            <span className="block text-sm text-carbon/70">Calendario, objetivos, medidas y diario</span>
           </span>
           <Flecha />
         </Link>

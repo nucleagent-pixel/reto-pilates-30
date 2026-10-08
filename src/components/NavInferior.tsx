@@ -7,7 +7,7 @@ const ITEMS = [
   { href: "/", texto: "Inicio", icono: "M3 11l9-7 9 7v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z" },
   { href: "/reto/", texto: "Reto", icono: "M4 5h16M4 12h16M4 19h10" },
   { href: "/rapidas/", texto: "Rápidas", icono: "M13 2L4 14h7l-1 8 9-12h-7z" },
-  { href: "/progreso/", texto: "Progreso", icono: "M4 20V10m6 10V4m6 16v-7m4 7H2" },
+  { href: "/progreso/", texto: "Mi proceso", icono: "M4 20V10m6 10V4m6 16v-7m4 7H2" },
   { href: "/perfil/", texto: "Perfil", icono: "M12 12a4 4 0 100-8 4 4 0 000 8zm-8 9a8 8 0 0116 0" },
 ];
 

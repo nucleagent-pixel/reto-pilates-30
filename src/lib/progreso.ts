@@ -24,6 +24,22 @@ export function calcularRacha(dias: string[]): number {
   return n;
 }
 
+/** La racha más larga de días seguidos con actividad. */
+export function mejorRacha(dias: string[]): number {
+  const orden = [...new Set(dias)].sort();
+  let mejor = 0;
+  let actual = 0;
+  let previo: Date | null = null;
+  for (const f of orden) {
+    const [a, m, d] = f.split("-").map(Number);
+    const fecha = new Date(a, m - 1, d);
+    actual = previo && Math.round((fecha.getTime() - previo.getTime()) / 86400000) === 1 ? actual + 1 : 1;
+    mejor = Math.max(mejor, actual);
+    previo = fecha;
+  }
+  return mejor;
+}
+
 type Completados = Record<string, Timestamp | null>;
 
 export function estaCompletado(dia: number, completados: Completados) {
