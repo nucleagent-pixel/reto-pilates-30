@@ -4,9 +4,11 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import Protegido from "@/components/Protegido";
 import Cargando from "@/components/Cargando";
+import Miniatura from "@/components/Miniatura";
 import { useAuth } from "@/components/AuthProvider";
 import { obtenerRutinas } from "@/lib/datos";
-import { diaActual, diaDesbloqueado, estaCompletado } from "@/lib/progreso";
+import { contarRapidas, diaActual, diaDesbloqueado, estaCompletado } from "@/lib/progreso";
+import { MARCA } from "@/lib/marca";
 import type { Rutina } from "@/lib/tipos";
 
 export default function Reto() {
@@ -29,52 +31,46 @@ function Lista() {
 
   const completados = perfil?.completados ?? {};
   const actual = diaActual(completados, rutinas.length);
+  const rapidas = contarRapidas(completados);
 
   return (
     <div className="space-y-5">
       <header>
         <h1 className="titular">Tu reto</h1>
-        <p className="mt-1 text-carbon/60">Cada día se desbloquea cuando completas el anterior.</p>
+        <p className="mt-2 text-carbon/70">
+          {MARCA.totalDias} clases que se desbloquean una tras otra, más {MARCA.totalRapidas} rutinas rápidas que haces
+          cuando quieras. Juntas suman tus {MARCA.totalReto} días.
+        </p>
       </header>
 
       {rutinas.length === 0 && (
-        <p className="tarjeta text-center text-carbon/60">Las clases se están preparando. Vuelve pronto.</p>
+        <p className="tarjeta text-center text-carbon/70">Las clases se están preparando. Vuelve pronto.</p>
       )}
 
-      <ul className="space-y-3">
+      <ul className="space-y-2.5">
         {rutinas.map((r) => {
           const hecho = estaCompletado(r.orden, completados);
           const abierto = diaDesbloqueado(r.orden, completados);
           const esActual = r.orden === actual;
           const contenido = (
             <div
-              className={`flex items-center gap-4 rounded-[1.75rem] p-4 ring-1 transition ${
+              className={`flex items-center gap-4 rounded-[1.5rem] p-2.5 pr-4 ring-1 transition-colors ${
                 esActual
-                  ? "bg-salvia text-white ring-salvia shadow-md"
-                  : hecho
-                    ? "bg-white/80 ring-niebla"
-                    : abierto
-                      ? "bg-white/80 ring-niebla hover:ring-salvia/40"
-                      : "bg-niebla/40 text-carbon/40 ring-transparent"
+                  ? "bg-salvia text-white ring-salvia"
+                  : abierto
+                    ? "bg-white ring-niebla hover:ring-salvia/50"
+                    : "bg-transparent text-carbon/50 ring-niebla"
               }`}
             >
-              <div
-                className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl font-titulo text-lg ${
-                  esActual ? "bg-white/20" : hecho ? "bg-madera text-white" : "bg-niebla"
-                }`}
-              >
-                {hecho ? "✓" : abierto ? r.orden : "🔒"}
-              </div>
+              <Miniatura categoria={r.categoria} texto={hecho ? "✓" : String(r.orden)} apagada={!abierto} />
               <div className="min-w-0 flex-1">
-                <p className={`text-xs ${esActual ? "text-white/80" : "text-carbon/50"}`}>Día {r.orden}</p>
-                <p className="truncate font-medium">{r.titulo}</p>
-                {(r.duracion || r.zona) && (
-                  <p className={`truncate text-sm ${esActual ? "text-white/80" : "text-carbon/60"}`}>
-                    {[r.duracion, r.zona].filter(Boolean).join(" · ")}
-                  </p>
-                )}
+                <p className={`text-sm ${esActual ? "text-white/80" : "text-carbon/60"}`}>
+                  Día {r.orden}
+                  {esActual ? " · te toca hoy" : hecho ? " · hecho" : !abierto ? " · bloqueado" : ""}
+                </p>
+                <p className="truncate font-semibold">{r.titulo}</p>
+                {r.duracion && <p className={`text-sm ${esActual ? "text-white/80" : "text-carbon/60"}`}>{r.duracion}</p>}
               </div>
-              
             </div>
           );
           return (
@@ -84,6 +80,21 @@ function Lista() {
           );
         })}
       </ul>
+
+      <Link
+        href="/rapidas/"
+        className="flex items-center justify-between gap-4 rounded-[1.5rem] bg-salvia-fondo px-5 py-4 transition-colors hover:bg-niebla"
+      >
+        <span>
+          <span className="block font-semibold">Rutinas rápidas</span>
+          <span className="block text-sm text-carbon/70">
+            {rapidas} de {MARCA.totalRapidas} hechas
+          </span>
+        </span>
+        <span className="font-titulo text-2xl font-bold text-salvia">
+          {rapidas}/{MARCA.totalRapidas}
+        </span>
+      </Link>
     </div>
   );
 }

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import Protegido from "@/components/Protegido";
 import Cargando from "@/components/Cargando";
-import { cambiarBloqueo, crearRutinasBase, guardarRutina, guardarRutinaParcial, listarBloqueados, listarUsuarios, obtenerRutinas } from "@/lib/datos";
+import { cambiarBloqueo, cargarClases, guardarRutina, guardarRutinaParcial, listarBloqueados, listarUsuarios, obtenerRutinas } from "@/lib/datos";
 import { fechaISO, idRapida, idReto } from "@/lib/progreso";
 import { resolverVideo } from "@/lib/video";
 import { MARCA } from "@/lib/marca";
@@ -133,7 +133,7 @@ function Clientas() {
                     </p>
                   </div>
                   <span className="chip">
-                    Día {hechos}/{MARCA.totalDias}
+                    {hechos}/{MARCA.totalReto} días
                   </span>
                   <button
                     onClick={async () => {
@@ -178,28 +178,32 @@ function Clases() {
 
   return (
     <div className="space-y-5">
-      <ImportarClases onListo={cargar} />
-
-      {faltan > 0 && (
-        <div className="tarjeta space-y-3">
-          <p className="font-medium">Faltan {faltan} clases por crear</p>
-          <p className="text-sm text-carbon/60">
-            Crea las {MARCA.totalDias} clases del reto y las {MARCA.totalRapidas} rutinas rápidas. Después solo pegas el link de cada video.
-          </p>
-          <button
-            className="boton"
-            disabled={creando}
-            onClick={async () => {
-              setCreando(true);
-              await crearRutinasBase().catch(console.error);
-              await cargar();
-              setCreando(false);
-            }}
-          >
-            {creando ? "Creando…" : "Crear clases base"}
-          </button>
-        </div>
-      )}
+      
+      <div className={`tarjeta space-y-3 ${faltan > 0 ? "ring-2 ring-salvia" : ""}`}>
+        <p className="font-titulo text-2xl font-semibold">
+          {faltan > 0 ? `Faltan ${faltan} clases por cargar` : `Las ${MARCA.totalReto} clases están cargadas`}
+        </p>
+        <p className="text-sm text-carbon/70">
+          Carga las {MARCA.totalDias} clases del reto y las {MARCA.totalRapidas} rutinas rápidas con sus títulos, videos de Drive y
+          categorías. Si ya existen, se actualizan títulos y videos; las descripciones y PDFs que hayas escrito se conservan.
+        </p>
+        <button
+          className={faltan > 0 ? "boton" : "boton-sec"}
+          disabled={creando}
+          onClick={async () => {
+            if (faltan === 0 && !confirm("Esto vuelve a poner los títulos y videos originales. ¿Continuar?")) return;
+            setCreando(true);
+            await cargarClases().catch((e) => {
+              console.error(e);
+              alert("No se pudo cargar. Revisa que tu correo esté en la colección admins.");
+            });
+            await cargar();
+            setCreando(false);
+          }}
+        >
+          {creando ? "Cargando…" : faltan > 0 ? `Cargar las ${MARCA.totalReto} clases` : "Volver a cargar las clases originales"}
+        </button>
+      </div>
 
       {rutinas.length > 0 && (
         <p className="text-sm text-carbon/60">
@@ -207,6 +211,8 @@ function Clases() {
           Vimeo o Bunny.
         </p>
       )}
+
+      <ImportarClases onListo={cargar} />
 
       {(["reto", "rapida"] as const).map((tipo) => {
         const grupo = rutinas.filter((r) => r.tipo === tipo);

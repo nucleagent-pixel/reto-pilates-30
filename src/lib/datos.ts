@@ -18,8 +18,8 @@ import {
 } from "firebase/firestore";
 import type { User } from "firebase/auth";
 import { fb } from "./firebase";
-import { fechaISO, idRapida, idReto } from "./progreso";
-import { MARCA } from "./marca";
+import { fechaISO } from "./progreso";
+import { CLASES } from "./clases";
 import type { PerfilUsuario, Registro, Rutina, TipoRutina, UsuarioAdmin } from "./tipos";
 
 /** Firestore no acepta campos "undefined": los quitamos. */
@@ -61,10 +61,11 @@ export async function actualizarNombre(uid: string, nombre: string) {
   await updateDoc(doc(fb().db, "usuarios", uid), { nombre });
 }
 
-export async function completarDia(uid: string, dia: number) {
+/** Marca como hecha una clase del reto ("1".."21") o una rutina rápida ("r1".."r9"). */
+export async function completarClase(uid: string, clave: string) {
   await updateDoc(
     doc(fb().db, "usuarios", uid),
-    new FieldPath("completados", String(dia)),
+    new FieldPath("completados", clave),
     serverTimestamp(),
     "diasActivos",
     arrayUnion(fechaISO()),
@@ -118,42 +119,16 @@ export async function guardarRutinaParcial(r: Partial<Rutina> & { id: string }) 
   await setDoc(doc(fb().db, "rutinas", id), limpiar(resto), { merge: true });
 }
 
-/** Crea las clases base que falten (sin sobreescribir las existentes). */
-export async function crearRutinasBase() {
+/** Guarda las 30 clases (títulos, links, categorías). Conserva las descripciones y PDFs que ya escribiste. */
+export async function cargarClases() {
   const { db } = fb();
-  const existentes = new Set((await getDocs(collection(db, "rutinas"))).docs.map((d) => d.id));
   const lote = writeBatch(db);
-  let creadas = 0;
-  for (let i = 1; i <= MARCA.totalDias; i++) {
-    const id = idReto(i);
-    if (existentes.has(id)) continue;
-    lote.set(doc(db, "rutinas", id), {
-      tipo: "reto",
-      orden: i,
-      titulo: `Día ${i}`,
-      duracion: "",
-      zona: "",
-      descripcion: "",
-      videoUrl: "",
-    });
-    creadas++;
+  for (const c of CLASES) {
+    const { id, descripcion: _d, ...resto } = c;
+    lote.set(doc(db, "rutinas", id), limpiar(resto), { merge: true });
   }
-  for (let i = 1; i <= MARCA.totalRapidas; i++) {
-    const id = idRapida(i);
-    if (existentes.has(id)) continue;
-    lote.set(doc(db, "rutinas", id), {
-      tipo: "rapida",
-      orden: i,
-      titulo: `Rutina rápida ${i}`,
-      duracion: "",
-      zona: "",
-      descripcion: "",
-      videoUrl: "",
-    });
-    creadas++;
-  }
-  if (creadas) await lote.commit();
-  return creadas;
+  await lote.commit();
+  return CLASES.length;
 }
 
 // ---------- Clientas (panel de admin) ----------

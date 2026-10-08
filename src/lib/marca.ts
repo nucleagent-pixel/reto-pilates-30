@@ -6,8 +6,9 @@ export const MARCA = {
   eslogan: "Fuerza, equilibrio, mente y cuerpo.",
   foto: "/laura.jpg",
   avatar: "/laura-avatar.jpg",
-  totalDias: 21,
-  totalRapidas: 10,
+  totalDias: 21, // clases del reto, se desbloquean en orden
+  totalRapidas: 9, // siempre disponibles; cada una suma un día
+  totalReto: 30, // 21 + 9
   // Número de WhatsApp de soporte/ventas, con código de país y sin "+" ni espacios.
   whatsapp: "570000000000",
 };

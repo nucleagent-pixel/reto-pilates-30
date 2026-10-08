@@ -41,6 +41,24 @@ export function diaActual(completados: Completados, total: number): number | nul
   return null;
 }
 
+/** Clave con la que se guarda una rutina rápida completada. */
+export function claveRapida(n: number) {
+  return `r${n}`;
+}
+
+export function rapidaCompletada(n: number, completados: Completados) {
+  return claveRapida(n) in completados;
+}
+
+/** Días del reto de 30: clases del reto + rutinas rápidas completadas. */
+export function contarHechos(completados: Completados) {
+  return Object.keys(completados).length;
+}
+
+export function contarRapidas(completados: Completados) {
+  return Object.keys(completados).filter((k) => k.startsWith("r")).length;
+}
+
 export function idReto(dia: number) {
   return `reto-${String(dia).padStart(2, "0")}`;
 }

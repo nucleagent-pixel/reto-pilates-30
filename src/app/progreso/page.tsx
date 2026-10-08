@@ -40,7 +40,7 @@ function Contenido() {
   const pesoInicial = pesos[0]?.peso;
   const pesoActual = pesos[pesos.length - 1]?.peso;
   const diferencia = pesoInicial && pesoActual ? +(pesoActual - pesoInicial).toFixed(1) : null;
-  const hechos = Object.keys(perfil?.completados ?? {}).length;
+  const hechos = Object.keys(perfil?.completados ?? {}).length; // clases + rápidas
   const racha = calcularRacha(perfil?.diasActivos ?? []);
 
   async function guardar(datos: Omit<Registro, "id" | "fecha">) {
@@ -53,7 +53,7 @@ function Contenido() {
       <h1 className="titular">Mi progreso</h1>
 
       <section className="grid grid-cols-3 gap-3 text-center">
-        <Dato titulo="Días" valor={`${hechos}/${MARCA.totalDias}`} />
+        <Dato titulo="Días" valor={`${hechos}/${MARCA.totalReto}`} />
         <Dato titulo="Racha" valor={`${racha} 🔥`} />
         <Dato
           titulo="Peso"

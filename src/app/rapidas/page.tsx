@@ -4,7 +4,11 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import Protegido from "@/components/Protegido";
 import Cargando from "@/components/Cargando";
+import Miniatura from "@/components/Miniatura";
+import { useAuth } from "@/components/AuthProvider";
 import { obtenerRutinas } from "@/lib/datos";
+import { contarRapidas, rapidaCompletada } from "@/lib/progreso";
+import { MARCA } from "@/lib/marca";
 import type { Rutina } from "@/lib/tipos";
 
 export default function Rapidas() {
@@ -16,6 +20,7 @@ export default function Rapidas() {
 }
 
 function Lista() {
+  const { perfil } = useAuth();
   const [rutinas, setRutinas] = useState<Rutina[] | null>(null);
 
   useEffect(() => {
@@ -24,32 +29,42 @@ function Lista() {
 
   if (!rutinas) return <Cargando />;
 
+  const completados = perfil?.completados ?? {};
+  const hechas = contarRapidas(completados);
+
   return (
     <div className="space-y-5">
       <header>
         <h1 className="titular">Rutinas rápidas</h1>
-        <p className="mt-1 text-carbon/60">Siempre disponibles, para cuando tienes poco tiempo. También suman a tu racha.</p>
+        <p className="mt-2 text-carbon/70">
+          Entre 8 y 12 minutos, siempre disponibles. Cada una que completes suma un día a tu reto de {MARCA.totalReto}.
+        </p>
+        <p className="mt-3 font-titulo text-2xl font-semibold">
+          {hechas} de {MARCA.totalRapidas} hechas
+        </p>
       </header>
 
-      <ul className="grid gap-3 sm:grid-cols-2">
-        {rutinas.map((r) => (
-          <li key={r.id}>
-            <Link
-              href={`/clase/?id=${r.id}`}
-              className="tarjeta flex h-full items-center gap-4 transition hover:ring-salvia/40"
-            >
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-miel/40 font-titulo text-lg">
-                {r.orden}
-              </div>
-              <div className="min-w-0">
-                <p className="truncate font-medium">{r.titulo}</p>
-                <p className="truncate text-sm text-carbon/60">
-                  {[r.duracion, r.zona].filter(Boolean).join(" · ") || "Rutina rápida"}
-                </p>
-              </div>
-            </Link>
-          </li>
-        ))}
+      <ul className="grid grid-cols-2 gap-3">
+        {rutinas.map((r) => {
+          const hecha = rapidaCompletada(r.orden, completados);
+          return (
+            <li key={r.id}>
+              <Link
+                href={`/clase/?id=${r.id}`}
+                className="block h-full rounded-[1.5rem] bg-white p-2.5 ring-1 ring-niebla transition-colors hover:ring-salvia/50"
+              >
+                <Miniatura categoria={r.categoria} texto={hecha ? "✓" : ""} tam="aspect-square w-full" />
+                <div className="px-1.5 pb-1 pt-2.5">
+                  <p className="font-semibold leading-tight">{r.titulo}</p>
+                  <p className="mt-0.5 text-sm text-carbon/60">
+                    {r.duracion || "Rutina rápida"}
+                    {hecha ? " · hecha" : ""}
+                  </p>
+                </div>
+              </Link>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
