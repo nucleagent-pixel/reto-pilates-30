@@ -6,7 +6,6 @@ import { updateProfile } from "firebase/auth";
 import Protegido from "@/components/Protegido";
 import { useAuth } from "@/components/AuthProvider";
 import { actualizarNombre } from "@/lib/datos";
-import { AVISO_SALUD } from "@/lib/marca";
 
 export default function Perfil() {
   return (
@@ -46,11 +45,6 @@ function Contenido() {
         </div>
         <button className="boton w-full">{guardado ? "¡Guardado! ✓" : "Guardar cambios"}</button>
       </form>
-
-      <div className="tarjeta space-y-2">
-        <p className="font-medium">⚠️ Antes de entrenar</p>
-        <p className="text-sm text-carbon/70">{AVISO_SALUD}</p>
-      </div>
 
       <div className="flex flex-col gap-3">
         {esAdmin && (
