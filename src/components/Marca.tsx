@@ -16,19 +16,19 @@ export function Simbolo({ tam = 36, claro = false }: { tam?: number; claro?: boo
 }
 
 /**
- * Logo de la marca. Si subes tu logo a public/marca/logo.png (fondo transparente),
+ * Logo de la app. Si subes tu logo a public/marca/logo-nuclea.png (fondo transparente),
  * se usa automáticamente; mientras tanto se muestra el símbolo con el nombre en texto.
  */
 export default function Marca({ claro = false, grande = false }: { claro?: boolean; grande?: boolean }) {
   const [sinLogo, setSinLogo] = useState(false);
-  const archivo = claro ? "/marca/logo-blanco.png" : "/marca/logo.png";
+  const archivo = claro ? "/marca/logo-nuclea-blanco.png" : "/marca/logo-nuclea.png";
 
   if (!sinLogo) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img
         src={archivo}
-        alt={`${MARCA.marca} Pilates`}
+        alt={MARCA.marca}
         className={grande ? "h-20 w-auto" : "h-10 w-auto"}
         onError={() => setSinLogo(true)}
       />
@@ -41,7 +41,7 @@ export default function Marca({ claro = false, grande = false }: { claro?: boole
       <div>
         <p className={`${grande ? "text-5xl" : "text-2xl"} font-bold tracking-tight`}>{MARCA.marca.toLowerCase()}</p>
         <p className={`${grande ? "text-2xl" : "text-sm"} font-light tracking-[0.3em] ${claro ? "text-white/85" : "text-salvia"}`}>
-          pilates
+          reto pilates
         </p>
       </div>
     </div>

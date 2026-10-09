@@ -1,7 +1,7 @@
 // Textos y datos de la marca. Edita aquí sin tocar el resto del código.
 export const MARCA = {
   nombre: "Reto Pilates 30D",
-  marca: "Laura Gómez",
+  marca: "Nuclea", // nombre de la app
   instructora: "Laura",
   eslogan: "Fuerza, equilibrio, mente y cuerpo.",
   foto: "/laura.jpg",

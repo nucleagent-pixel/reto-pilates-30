@@ -4,7 +4,7 @@ import { AuthProvider } from "@/components/AuthProvider";
 import { MARCA } from "@/lib/marca";
 
 export const metadata: Metadata = {
-  title: `${MARCA.nombre} · ${MARCA.marca} Pilates`,
+  title: `${MARCA.marca} · ${MARCA.nombre}`,
   description: `${MARCA.eslogan} Tus clases y tu progreso del reto con ${MARCA.instructora}.`,
   robots: { index: false, follow: false },
   icons: { icon: [{ url: "/icono.svg", type: "image/svg+xml" }, { url: "/icono.png", type: "image/png" }], apple: "/icono.png" },
